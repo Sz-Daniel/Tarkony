@@ -1,9 +1,10 @@
 import axios from "axios";
 import type { GraphqlQueriesType } from "../type";
 import { queries } from "./query";
+// Re-export the queries object for easier use in other components
 export { queries }
 
-//Lets inicalize the Axios 
+//Initalize Axios client
 const gqlClient = axios.create({
     baseURL: 'https://api.tarkov.dev/graphql',
     headers: {
@@ -15,10 +16,13 @@ const gqlClient = axios.create({
 })
 
 //Create a controll function for calling with POST
-//call queries which contains all already generated fragments
+//calls queries that contains all already generated fragments
 export async function fetchGraphQL<T>(queryKey: GraphqlQueriesType): Promise<T> {
     const query = queries[queryKey]
     const response = await gqlClient.post('', { query })
+    if (response.data.errors) {
+        throw new Error(JSON.stringify(response.data.errors));
+    }
     return response.data
 }
 

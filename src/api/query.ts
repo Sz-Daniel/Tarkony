@@ -3,7 +3,7 @@
  * queries will contain all of them with simple name 
  */
 
-//ItemsList
+//ShortItemsList
 const SHORT_ITEMS_LIST = `
     fragment ShortItemsList on Item {
         id
@@ -38,10 +38,10 @@ function buildQuery(fragment: string,fragmentName:string): string{
     `;
 }
 
-//Everytime when expand the fragment list, these data should update manually
-//FragmantName|
+//Everytime when it's expanded the fragments list, these data should update manually
+//FragmentName|
 export type GraphqlQueriesType = 'ShortItemsList' | 'AllAttrItemList';
-//FragmantName: buildQuery(FRAGMANT_LITERAL, FragmantName)
+//FragmentName: buildQuery(FRAGMANT_LITERAL, FragmentName)
 export const queries = {
     ShortItemsList: buildQuery(SHORT_ITEMS_LIST,'ShortItemsList'),
     AllAttrItemList: buildQuery(ALL_ATTR_ITEM_LIST,'AllAttrItemList'),
