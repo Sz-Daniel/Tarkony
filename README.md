@@ -12,6 +12,7 @@ Access to the site will be restricted via a minimalist login system, due gaming 
 API Source - GraphQL
 [https://tarkov.dev/api/](https://tarkov.dev/api/)
 
+```bash
 Tarkony
 ├── public/
 ├── src/
@@ -24,6 +25,7 @@ Tarkony
 │ └── type.ts
 ├── index.html
 └── README.md
+```
 
 Query.ts
 It contains the fragmens for every call the page actual use. It builds the Queries with a generator and every time whe it's expanded with a new fragment the container need to updates manually.
