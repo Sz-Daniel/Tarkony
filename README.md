@@ -1,37 +1,89 @@
-As a junior, it's important for me to maintain something like a 'JJ' – a Junior Journal – which includes detailed commenting, continuously updating the README, and logging any methods or solutions that get replaced along the way
+# Tarkony
 
-"Tarkony"
-It's related to an online shooter game, Escape From Tarkov.
-Real-time item prices for both flea market and vendors. 
-Vendor availability
-Crafting cost analysis: Comparing crafting cost vs purchase cost
-Price-to-value rankings for armors and weapon
-Weapon Permutation builder
-Access to the site will be restricted via a minimalist login system, due gaming cultural reasons
+## Overview
 
-API Source - GraphQL
+As a junior developer, I find it essential to maintain a **Junior Journal (JJ)** — a disciplined practice of detailed commenting, continuously updating the README, and logging any replaced methods or solutions. This helps track progress and decisions transparently.
+
+---
+
+## Project Description
+
+**Tarkony** is a tool related to the online shooter game *Escape From Tarkov*. It provides:
+
+- Real-time item prices from both the flea market and vendors  
+- Vendor availability  
+- Crafting cost analysis (comparing crafting cost versus purchase cost)  
+- Price-to-value rankings for armor and weapons  
+- A weapon permutation builder  
+
+Due to gaming culture sensitivities, access to the site is restricted behind a minimalist login system.
+
+---
+
+## API Source
+
+Data is fetched from a GraphQL API:  
 [https://tarkov.dev/api/](https://tarkov.dev/api/)
+
+---
+
+## Project Structure
 
 ```bash
 Tarkony
 ├── public/
 ├── src/
-│ ├── api/
-│ │ ├── graphQLClient.ts
-│ │ └── query.ts
-│ ├── devtools/
-│ │ └── dataShow.tsx
-│ ├── App.tsx
-│ └── type.ts
+│   ├── api/
+│   │   ├── graphQLClient.ts
+│   │   └── query.ts
+│   ├── devtools/
+│   │   └── dataShow.tsx
+│   ├── App.tsx
+│   └── type.ts
 ├── index.html
 └── README.md
 ```
+## Key Modules
 
-Query.ts
-It contains the fragmens for every call the page actual use. It builds the Queries with a generator and every time whe it's expanded with a new fragment the container need to updates manually.
+### `query.ts`
 
-graphQLClients.ts
-Process logic happen here, using Axios, using the preRendered queries and dinamically easy to use async fetchGraphQL('FragmantName')
+Contains the fragments for every GraphQL call used on the site, paired with adapters to process fetch results directly.  
+*Note:* Earlier, queries were dynamically generated, but adding new fragments required manual container updates — a limitation worth reconsidering.
 
-dataShow.tsx
-Just a simple Component page to testing the fetching. 
+### `graphQLClient.ts`
+
+This module handles request logic using Axios, executing pre-rendered queries dynamically with an easy async interface: `fetchGraphQL('FragmentName')`.
+
+### `dataShow.tsx`
+
+A simple component page used for testing the fetching functionality.
+
+---
+
+## Junior Journal - 2025.05.24
+
+### Upcoming tasks related to fetching:
+
+- Implement daily price updates only, with larger data fetches limited to weekly intervals.
+- Rename `query.query` to `query.fragment` for clarity and consistency.
+
+---
+
+## Reflections on fetching implementation
+
+I experimented extensively to develop a fetching system that is dynamic, simple to invoke, yet flexible enough for various use cases. Although targeted function calls might have sufficed at this stage and scope, I managed to design a construct that properly handles queries both as types, query structures, and at the state management level — supporting long-term maintainability.
+
+Since distinct use cases arose, I created a custom hook to accommodate them:
+
+```typescript
+useFetchintoState<useStateType[]>(
+  SpecialQuery, 
+  setState, 
+  SpecialQueryAdapterToState
+);
+```
+At its core, this relies on an Axios POST function, which currently suffices for GraphQL queries. The query fragment is passed as a parameter (fetchGQLwQuery). The hook integrates with React’s useQuery pattern, ensuring cache persistence even if the user navigates away, keyed by query name.
+
+API data refreshes daily. For now, I monitor queries and results via the console, though I plan to migrate to more advanced tools later.
+
+Because this data set will be used across multiple components, I persist it in state. A coherent flow emerged by passing result.data as a dependency in the hook’s array, so state updates consistently reflect query updates, preserving data consistency.
