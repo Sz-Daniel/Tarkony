@@ -1,0 +1,130 @@
+________________________First version of fetching into data: 
+
+   const [categoryList, setCategoryList] = useState<CategoryType[]>([])
+    const [shortItemsList,setShortItemsList] = useState<ShortItemType[]>([])
+    const shortItemIniResult = useQuery({
+      queryKey: ['shortItemIni'],
+      queryFn: () => fetchShortItems(),
+      staleTime: 1000 * 60 * 60* 24, // daily
+    });
+
+    useEffect(()=>{
+      if (shortItemIniResult.isLoading) console.log("shortItemIniResult Loading");
+      if (shortItemIniResult.isError) console.log("shortItemIniResult Error");
+      if (shortItemIniResult.isSuccess && shortItemIniResult.data) {
+        console.log("shortItemIniResult", shortItemIniResult.data);
+        setShortItemsList(shortItemIniResult.data);
+      }
+    },[shortItemsList]);
+
+    const categoryIniResult = useQuery({
+      queryKey: ['categoryIni'],
+      queryFn: () => fetchCategoryList(),
+      staleTime: 1000 * 60 * 60* 24, // daily
+    });
+  
+    useEffect(()=>{
+    if (categoryIniResult.isLoading) console.log("categoryIniResult Loading");
+    if (categoryIniResult.isError) console.log("categoryIniResult Error");
+    if (categoryIniResult.isSuccess && categoryIniResult.data) {
+      console.log("categoryIniResult", categoryIniResult.data);     
+    }
+  },[categoryIniResult])
+ */
+
+__________________Second version of fetching into data: 
+
+  const categoryresult = useQuery({
+    queryKey: [categoriesQuery.name],
+    queryFn: () => fetchGQLwQuery(categoriesQuery.query),
+    staleTime: STALE_TIME_WEEKLY
+  });
+
+  useEffect(()=>{
+    const { data, isLoading, isError, isSuccess } = categoryresult;
+    if (isLoading) console.log(categoriesQuery.name,"Loading");
+    if (isError) console.log(categoriesQuery.name,"Error");
+    if (isSuccess && data) {
+      console.log(categoriesQuery.name, data);  
+      setCategoryList(data.data.handbookCategories);
+      
+    }  
+  },[categoryresult.data])
+
+
+  const shortItemsresult = useQuery({
+    queryKey: [shortItemsListQuery.name],
+    queryFn: () => fetchGQLwQuery(shortItemsListQuery.query),
+    staleTime: STALE_TIME_WEEKLY
+  });
+
+  useEffect(()=>{
+    const { data, isLoading, isError, isSuccess } = shortItemsresult;
+    if (isLoading) console.log(shortItemsListQuery.name,"Loading");
+    if (isError) console.log(shortItemsListQuery.name,"Error");
+    if (isSuccess && data) {
+      const shortcut =  Object.values(data.data)[0];
+      console.log("TEST", shortItemsListQuery.name, shortcut);  
+      setShortItemList(shortItemsListAdapter(data.data.items));
+      
+    }  
+  },[shortItemsresult.data])
+
+ __________________Third Version
+
+  const[categoryList, setCategoryList] = useState<CategoryMapType[]>([])
+  const[shortItemsList,setShortItemList] = useState<ItemsType<ShortItemType>[]>([])
+      
+    useFetchintoState<ItemsType<ShortItemType>[],ItemsType<ShortItemQueryType>[]>
+    (shortItemsListQuery,
+    setShortItemList,
+    shortItemsListAdapter)
+
+
+    useEffect(()=>{
+    console.log("shortItemsList",shortItemsList);
+    },[shortItemsList])
+
+  /* Category list */
+      useFetchintoState<HandbookCategoriesType<CategoryMapType>[]>
+    (categoriesQuery,
+      setCategoryList,
+      )  
+  
+    React.useEffect(()=>{
+   console.log("categoryList",categoryList);
+    },[categoryList])
+
+
+    //Dinamic fetch data into state. 
+//Optional: if it's need an adapter for state
+export function useFetchintoState<T, A = T>( 
+    query: QueryType,
+    setStateVariable:  React.Dispatch<React.SetStateAction<T>>,
+    adapterToState?: (data: A) => T,
+    ) {
+
+    const result = useQuery({
+        queryKey: [`${query.name}`],
+        queryFn: () => fetchGQLwQuery(query.query),
+        staleTime: 1000 * 60 * 60 * 24 // daily
+        
+    });
+
+    useEffect(()=>{
+        const { data, isLoading, isError, isSuccess } = result;
+        if (isLoading) console.log(`${query.name}`,"Loading");
+        if (isError) console.log(`${query.name}`,"Error");
+        if (isSuccess && data) {
+            console.log(`${query.name}`, data);
+            //Data structure was data.data.items or data.data.category 
+            //and this way I can skip the data.data
+            const path: any =  Object.values(data.data)[0];
+            if (adapterToState) {
+                setStateVariable(adapterToState(path));
+            } else {
+                setStateVariable(path);
+            }
+        }
+    },[result.data])
+}

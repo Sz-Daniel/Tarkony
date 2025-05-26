@@ -60,30 +60,44 @@ A simple component page used for testing the fetching functionality.
 
 ---
 
-## Junior Journal - 2025.05.24
+## Junior Journal - 2025.05.26
 
-### Upcoming tasks related to fetching:
+### Roadmap:
 
-- Implement daily price updates only, with larger data fetches limited to weekly intervals.
-- Rename `query.query` to `query.fragment` for clarity and consistency.
+- Item details: Barter, Task, craft needs show 
+- Searchbar - works same as category
+- Daily price update
+- Routing - "All detail" single item page
 
 ---
 
 ## Reflections on fetching implementation
 
-I experimented extensively to develop a fetching system that is dynamic, simple to invoke, yet flexible enough for various use cases. Although targeted function calls might have sufficed at this stage and scope, I managed to design a construct that properly handles queries both as types, query structures, and at the state management level — supporting long-term maintainability.
+To retrieve the data, I approached the problem from multiple angles, aiming to design a dynamic, easily callable yet flexible system. While in this phase of the project a few direct fetch calls and local state would have sufficed, I deliberately built a more generalized solution that is maintainable, reusable, and scalable in the long term.
 
 Since distinct use cases arose, I created a custom hook to accommodate them:
 
 ```typescript
-useFetchintoState<useStateType[]>(
-  SpecialQuery, 
-  setState, 
-  SpecialQueryAdapterToState
-);
+  useFetchIntoCache<QueryType[],AdapterType[]>(
+    Query,
+    QueryAdapter,
+  );
 ```
-At its core, this relies on an Axios POST function, which currently suffices for GraphQL queries. The query fragment is passed as a parameter (fetchGQLwQuery). The hook integrates with React’s useQuery pattern, ensuring cache persistence even if the user navigates away, keyed by query name.
 
-API data refreshes daily. For now, I monitor queries and results via the console, though I plan to migrate to more advanced tools later.
+This custom hook performs a GraphQL query (currently via Axios.post), forwarding the query.query object. It then extracts the relevant branch from the data.data object in the response and, optionally, transforms the structure using an adapter function tailored to the consumption context.
 
-Because this data set will be used across multiple components, I persist it in state. A coherent flow emerged by passing result.data as a dependency in the hook’s array, so state updates consistently reflect query updates, preserving data consistency.
+The hook is integrated with React Query, thus it:
+
+- Caches the response data using query.name as the cache key
+- Retains data across navigation events
+- Refreshes data on a daily basis via the staleTime setting
+
+Rather than returning the fetched data directly, the hook writes it into the React Query cache. The data can later be accessed using queryClient.getQueryData(...), even across multiple components.
+
+Fetching roadmap:
+
+- Basic local query execution with direct call and local state storage
+- Introduction of a dynamic query object
+- Addition of an adapter to handle varying data structures
+- Transition to cache-based data storage and access
+

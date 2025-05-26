@@ -1,12 +1,4 @@
-/**
- * Function: generate the fragments for easy usable. 
- * queries will contain all of them with simple name 
- */
-
-//Changed into { name, query } due graphQLClient.ts useFetchintoState improved hook, caching name normalized. 
-//Adapters added. Query into PageState 
-
-//Trader Price need to find the perfect vendor to sell
+//Need to polish
 export function shortItemsListAdapter(data: any) {
   return data.map((item: any)=>({
     id: item.id,
@@ -23,9 +15,12 @@ export function shortItemsListAdapter(data: any) {
     ,0)]?.vendor?.name, 
     lowestPrice: item.lastLowPrice,
     lastPrice: item.avg24hPrice,
-    diffPrice: Math.floor( (item.avg24hPrice / item.lastLowPrice) * 100) / 100
+    diffPrice: Math.floor( (item.avg24hPrice / item.lastLowPrice) * 100) / 100,
+    category: item.category.normalizedName,
+    wiki: item.wikiLink
   }))   
 }
+
 export const shortItemsListQuery = {
   name: 'shortItemsListQuery',
   query: `   
@@ -42,157 +37,28 @@ export const shortItemsListQuery = {
           name,
         }
       }
+      category {
+        normalizedName,
+      }
+      wikiLink     
     } 
   }`
 }
 
-export const testIdNameQuery = `
- query {
-    itemCategories {
+export const categoriesQuery = {
+  name: 'categoriesQuery',
+  query: `
+  query{
+     itemCategories {
       id
       name
+      normalizedName
+      children {
+        name
+      }
+      parent {
+        name
+      }
     }
   }`
-
-
-  export const categoryListQuery = {
-    name: 'categoryListQuery',
-    query:`   
-    query {
-    itemCategories {
-        id
-        name
-        normalizedName
-        children {
-          id
-        }
-        parent {
-          id
-        }
-      }
-    }`
-  }
-
-
-
-
-//AllAttrItemList
-const MAIN_ITEM_LIST = `
-    fragment MainItemList on Item {
-      	id, 
-        name, 
-        normalizedName, 
-        shortName, 
-        description, 
-        basePrice, 
-        updated, 
-        width, 
-        height, 
-        backgroundColor, 
-        iconLink, 
-        gridImageLink, 
-        baseImageLink, 
-        inspectImageLink, 
-        image512pxLink, 
-        image8xLink, 
-        wikiLink, 
-        types, 
-        avg24hPrice, 
-        properties{
-          __typename
-        },
-        conflictingItems{
-        	id,name
-        },
-        conflictingSlotIds, 
-        accuracyModifier, 
-        recoilModifier, 
-        ergonomicsModifier,
-        hasGrid, 
-        blocksHeadphones, 
-        link, 
-        lastLowPrice, 
-        changeLast48h, 
-        changeLast48hPercent, 
-        low24hPrice, 
-        high24hPrice, 
-        lastOfferCount, 
-        sellFor{
-          vendor{name, normalizedName,__typename},
-          price,
-          currency,
-          currencyItem{id,name},
-          priceRUB,
-          __typename
-        }, 
-        buyFor{
-                    vendor{name, normalizedName,__typename},
-          price,
-          currency,
-          currencyItem{id,name},
-          priceRUB,
-          __typename
-        }, 
-        containsItems{
-          item{id,name},
-          count,
-          quantity,
-          attributes{type,name,value},
-          __typename
-        }, 
-        category{id,name,normalizedName,parent{id},children{id},__typename}, 
-        categories{id}, 
-        bsgCategoryId, 
-        handbookCategories{id,name,normalizedName,parent{id},children{id},__typename}, 
-        weight, 
-        velocity, 
-        loudness, 
-        usedInTasks{id,name,normalizedName,trader{id},map{id},experience,wikiLink}, 
-        receivedFromTasks{id}, 
-        bartersFor{id}, 
-        bartersUsing{id}, 
-        craftsFor{id}, 
-        craftsUsing{id}, 
-        historicalPrices{price,priceMin,timestamp}, 
-        fleaMarketFee
-    }`;
-
-function buildQuery(fragment: string,fragmentName:string): string{
-    return `
-    ${fragment}
-    query {
-        items {
-            ...${fragmentName}
-        }
-    }
-    `;
 }
-
-//Everytime when it's expanded the fragments list, these data should update manually
-//FragmentName|
-export type GraphqlQueriesType = 'MainItemList' ;
-
-//FragmentName: buildQuery(FRAGMANT_LITERAL, FragmentName)
-export const queries = {
-    MainItemList: buildQuery(MAIN_ITEM_LIST,'MainItemList'),
-}
-
-/**
- * 
- * const MAIN_ITEM_LIST = `
-    fragment MainItemList on Item {
-        id
-        name
-        description
-        basePrice
-        width
-        height
-        weight
-        iconLink
-        wikiLink
-        category {
-            name
-        }
-        properties{__typename}
-    }`;
- */
