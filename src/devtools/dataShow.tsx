@@ -5,13 +5,6 @@ import { CategoryMenu } from "../components/CategoryMenu";
 import { ItemList } from "../components/ItemList";
 import type { TESTQueryType, TESTResultType } from "../types/type";
 
-// Next:
-// Category select - next: levels show
-// Item details: Tasks and Hovering the counters 
-// Daily price update
-// Routing - "All detail" single item page
-// Searchbar - Autocomplete?
-
 export function DataShow() { 
   const [selectedCategory, setSelectedCategory]= useState<string[]>(["item"])
 

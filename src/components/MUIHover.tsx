@@ -1,10 +1,13 @@
 import * as React from 'react';
 import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
+import { Box } from '@mui/material';
+
 type HoverPropsType = {
   title: string;
   children: React.ReactNode;
 };
+
 export const MUIHover: React.FC<HoverPropsType> = ({title, children}) => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
@@ -19,7 +22,7 @@ export const MUIHover: React.FC<HoverPropsType> = ({title, children}) => {
   const open = Boolean(anchorEl);
 
   return (
-    <div>
+    <Box>
       <Typography
         aria-owns={open ? 'mouse-over-popover' : undefined}
         aria-haspopup="true"
@@ -46,6 +49,6 @@ export const MUIHover: React.FC<HoverPropsType> = ({title, children}) => {
       >
         {children}
       </Popover>
-    </div>
+    </Box>
   );
 }

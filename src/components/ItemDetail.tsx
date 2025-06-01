@@ -1,93 +1,180 @@
 
-import { AccordionDetails, Link, Paper, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from "@mui/material"
+import { AccordionDetails, Box, Link, Typography } from "@mui/material"
 import { useFetchIntoCache } from "../api/graphQLClient"
-import { itemDetailsQuery, itemDetailsQueryAdapter, TESTQuery } from "../api/query";
+import { itemDetailsQuery, itemDetailsQueryAdapter } from "../api/query";
 import { useEffect } from "react";
 import type { ItemDetailPropsType } from "../types/type";
 import type { ItemDetailQueryType } from "../types/queryType";
 import type { ItemDetailResultType } from "../types/responseType";
 import { MUIHover } from "./MUIHover";
+import { styled } from "@mui/system";
 
 export function ItemDetail({itemId}:ItemDetailPropsType) {
 
-const { data, isSuccess, isLoading, status } = useFetchIntoCache<ItemDetailQueryType[],ItemDetailResultType[]>(itemDetailsQuery(itemId),itemDetailsQueryAdapter);
+    const { data, isSuccess, isLoading, status } = useFetchIntoCache<ItemDetailQueryType[],ItemDetailResultType[]>(itemDetailsQuery(itemId),itemDetailsQueryAdapter);
 
-useEffect(()=>{
-    console.log("details",data, status)
-},[isSuccess, data]);
+    useEffect(()=>{
+        console.log("details",data, status)
+    },[isSuccess, data]);
 
-const item = isSuccess && data && data.length > 0 ? data[0] as ItemDetailResultType : null;
+    const item = isSuccess && data && data.length > 0 ? data[0] as ItemDetailResultType : null;
+
+    const Item = styled(Box)(({ theme }) => ({
+        padding: theme.spacing(2),
+        textAlign: 'center',
+    }));
+
     return(
     <>
         {isLoading && <Typography>Isloading</Typography>}
         {item && 
-            <AccordionDetails>
-                <TableContainer component={Paper}>
-                    <Table size="small">
-                    <TableBody>
-                        <TableRow>
-                            <TableCell>{item.id}</TableCell>
-                            <TableCell><Link href={item.wiki}>Wiki</Link></TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell><Typography>sellFor</Typography></TableCell>
-                            {item.sellOffer.map((trader,idx)=>(
-                            <TableCell key={idx}>{trader.vendor} - {trader.price}</TableCell>   
-                            ))}             
-                        </TableRow>
-                        <TableRow>
-                            <TableCell><Typography>buyFor</Typography></TableCell>
-                            {item.buyOffer.map((trader,idx)=>(
-                            <TableCell key={idx}>{trader.vendor} - {trader.price}</TableCell>   
+        <AccordionDetails >
+            <Box sx={{ display: 'flex', gap: 1}}>
+                
+                <Box sx={{ flex: 1, alignSelf: 'flex-start'}}>
+                    <Typography> Trader: </Typography>
+                </Box>                
+                <Box sx={{ flex: 1}}>
+                    <MUIHover title={`Can be sold: ${item.sellOffer.length}`}>
+                        <Box sx={{ display: 'flex', gap: 1 }}>
+                            {item.sellOffer.map((trader, idx) => (
+                            <Item key={idx} sx={{ flex: 1 }}>
+                                <Typography>{trader.vendor}</Typography>
+                                <Typography>{trader.price}</Typography>
+                            </Item>
                             ))}
-                        </TableRow>
-                        <TableRow>
-                           <TableCell><Typography>bartersFor</Typography></TableCell>
-                            {item.bartersNeeds.map((bartel,idx)=>( 
-                                <TableCell key={idx}>Count:{bartel.count}  name:{bartel.name} 
-                                <img src={bartel.icon} alt={bartel.name} loading="lazy" style={{ maxWidth: '100%' }} /></TableCell>     
+                        </Box>
+                    </MUIHover>
+                </Box>
+                <Box sx={{ flex: 1}}>
+                    <MUIHover title={`Offer: ${item.buyOffer.length}`}>
+                        <Box sx={{ display: 'flex', gap: 1 }}>
+                            {item.buyOffer.map((trader, idx) => (
+                            <Item key={idx} sx={{ flex: 1 }}>
+                                <Typography>{trader.vendor}</Typography>
+                                <Typography>{trader.price}</Typography>
+                            </Item>
                             ))}
-                        </TableRow>
-                        <TableRow>
-                            <TableCell><Typography>bartersUsing</Typography></TableCell>
-                           {item.bartersGive.map((bartel,idx)=>( 
-                                <TableCell key={idx}>Count:{bartel.count}  name:{bartel.name} 
-                                <img src={bartel.icon} alt={bartel.name} loading="lazy" style={{ maxWidth: '100%' }} /></TableCell>     
+                        </Box>
+                    </MUIHover>
+                </Box>
+            </Box>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+                <Box sx={{ flex: 1}}>
+                    <Typography> Barter: </Typography>
+                </Box>   
+                <Box sx={{ flex: 1}}>
+                    <MUIHover title={`Needs for the offer: ${item.bartersNeeds.length}`}>
+                        <Box sx={{ display: 'flex', gap: 1 }}>
+                            {item.bartersNeeds.map((barter, idx) => (
+                            <Item key={idx} sx={{ flex: 1 }}>
+                                <img
+                                src={barter.icon}
+                                alt={barter.name}
+                                loading="lazy"
+                                style={{ maxWidth: '100%' }}
+                                />
+                            </Item>
                             ))}
-                        </TableRow>
-                        <TableRow>
-                            <TableCell><Typography>craftsFor</Typography></TableCell>
-                           {item.craftsNeeds.map((craft,idx)=>( 
-                                <TableCell key={idx}>Count:{craft.count}  name:{craft.name} 
-                                <img src={craft.icon} alt={craft.name} loading="lazy" style={{ maxWidth: '100%' }} /></TableCell>     
+                        </Box>
+                    </MUIHover>
+                </Box>
+                <Box sx={{ flex: 1}}>
+                    <MUIHover title={`Offer gives: ${item.bartersGive.length}`}>
+                        <Box sx={{ display: 'flex', gap: 1 }}>
+                            {item.bartersGive.map((barter, idx) => (
+                            <Item key={idx} sx={{ flex: 1 }}>
+                                <img
+                                src={barter.icon}
+                                alt={barter.name}
+                                loading="lazy"
+                                style={{ maxWidth: '100%' }}
+                                />
+                            </Item>
                             ))}
-                        </TableRow>
-                        <TableRow>
-                            <TableCell><Typography>craftsUsing</Typography></TableCell>
-                           {item.craftsGive.map((craft,idx)=>( 
-                                <TableCell key={idx}>Count:{craft.count}  name:{craft.name} 
-                                <img src={craft.icon} alt={craft.name} loading="lazy" style={{ maxWidth: '100%' }} /></TableCell>     
+                        </Box>
+                    </MUIHover>
+                </Box>
+            </Box>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+                <Box sx={{ flex: 1}}>
+                    <Typography> Crafting:  </Typography>
+                </Box>   
+                <Box sx={{ flex: 1}}>
+                    <MUIHover title={`Needs for the craft: ${item.craftsNeeds.length}`}>
+                        <Box sx={{ display: 'flex', gap: 1 }}>
+                            {item.craftsNeeds.map((craft, idx) => (
+                            <Item key={idx} sx={{ flex: 1 }}>
+                                <img
+                                src={craft.icon}
+                                alt={craft.name}
+                                loading="lazy"
+                                style={{ maxWidth: '100%' }}
+                                />
+                            </Item>
                             ))}
-                        </TableRow>
-                        <TableRow>
-                            <TableCell><Typography>tasksRewards</Typography></TableCell>
-                           {item.tasksRewards.map((task,idx)=>( 
-                                <TableCell key={idx}>Count:{task.count}  name:{task.name}</TableCell>     
+                        </Box>
+                    </MUIHover>
+                </Box>
+                <Box sx={{ flex: 1}}>
+                    <MUIHover title={`Crafting gives: ${item.craftsGive.length}`}>
+                        <Box sx={{ display: 'flex', gap: 1 }}>
+                            {item.craftsGive.map((craft, idx) => (
+                            <Item key={idx} sx={{ flex: 1 }}>
+                                <img
+                                src={craft.icon}
+                                alt={craft.name}
+                                loading="lazy"
+                                style={{ maxWidth: '100%' }}
+                                />
+                            </Item>
                             ))}
-                        </TableRow>
-                        <TableRow>
-                            <TableCell><Typography></Typography></TableCell>
-                            <TableCell>
-                                <MUIHover title={`Output items number:${item.craftsGive.length}`}>
-                                {item.craftsGive.map((craft,idx)=>( 
-                                    <TableCell key={idx}><img src={craft.icon} alt={craft.name} loading="lazy" style={{ maxWidth: '100%' }} /></TableCell>     
-                                ))}   
-                                </MUIHover>
-                            </TableCell>
-                        </TableRow>
-                    </TableBody>
-                    </Table>
-                </TableContainer>
+                        </Box>
+                    </MUIHover>
+                </Box>
+            </Box>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+                <Box sx={{ flex: 1}}>
+                    <Typography> Task: </Typography>
+                </Box>   
+                <Box sx={{ flex: 1}}>
+                    <MUIHover title={`Task need: ${item.tasksRewards.length}`}>
+                        <Box sx={{ display: 'flex', gap: 1 }}>
+                            {item.tasksRewards.map((task, idx) => (
+                            <Item key={idx} sx={{ flex: 1 }}>
+                             <Typography>{task.name}</Typography>
+                      
+                            </Item>
+                            ))}
+                        </Box>
+                    </MUIHover>
+                </Box>
+                <Box sx={{ flex: 1}}>
+                    <MUIHover title={`Task gives: ${item.craftsGive.length}`}>
+                        <Box sx={{ display: 'flex', gap: 1 }}>
+                            {item.craftsGive.map((craft, idx) => (
+                            <Item key={idx} sx={{ flex: 1 }}>
+                                <img
+                                src={craft.icon}
+                                alt={craft.name}
+                                loading="lazy"
+                                style={{ maxWidth: '100%' }}
+                                />
+                            </Item>
+                            ))}
+                        </Box>
+                    </MUIHover>
+                </Box>
+            </Box>
+            <Box sx={{ display: 'flex', gap: 1}}>
+                
+                <Box sx={{ flex: 2, alignSelf: 'flex-start'}}>
+                    <Link href={item.wiki}>Wiki</Link>
+                </Box>
+                <Box sx={{ flex: 2, alignSelf: 'flex-start'}}>
+                    <Typography>All data</Typography>
+                </Box>      
+            </Box>
             </AccordionDetails>
         }
     </>

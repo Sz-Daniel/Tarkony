@@ -1,4 +1,4 @@
-import { Accordion, AccordionSummary, Box, Grid, Pagination,Paper,Stack,styled,Typography } from "@mui/material"
+import { Accordion, AccordionSummary, Box, Pagination,Stack,styled,Typography } from "@mui/material"
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { itemBaseQuery } from "../api/query";
@@ -17,7 +17,6 @@ export function ItemList({selectedCategory, setSelectedCategory}:selectedCategor
     const queryClient = useQueryClient();
     const itemBaseListCache: ItemBaseResultType[] = queryClient.getQueryData([itemBaseQuery.name])?? [];
 
-    
     useEffect(() => {
         if (selectedCategory.length === 1 && selectedCategory.includes("item")) {
             console.log(selectedCategory)
@@ -29,7 +28,7 @@ export function ItemList({selectedCategory, setSelectedCategory}:selectedCategor
         }
     }, [selectedCategory, itemBaseListCache]);
 
-    const handleAccordionChange =
+    const accordionHandleChange =
         (panel: string) => async (event: React.SyntheticEvent) => {
             setSelectedItem(panel);
             console.log("all",queryClient.getQueryCache().findAll());
@@ -54,73 +53,72 @@ export function ItemList({selectedCategory, setSelectedCategory}:selectedCategor
 
     return(
     <>
-    {paginatedItems.map((item: any) => (
+        {paginatedItems.map((item: any) => (
 
-    <Accordion 
-    key={item.id}
-    onChange={handleAccordionChange(item.id)}>
-    <AccordionSummary expandIcon={<ExpandMoreIcon />}
-    sx={{
-      '& .MuiAccordionSummary-content': {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between', // vagy 'center' ha kell
-        gap: 2,
-      },
-    }}>
-       
-        <Box sx={{ flex: 1, alignSelf: 'flex-start' }}>
-            <Item>
-                <img
-                src={item.iconURL}
-                alt={item.name}
-                loading='lazy'
-                style={{ maxWidth: '100%' }}
-                />
-            </Item>
-        </Box>
+        <Accordion 
+        key={item.id}
+        onChange={accordionHandleChange(item.id)}>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}
+        sx={{
+        '& .MuiAccordionSummary-content': {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between', // vagy 'center' ha kell
+            gap: 2,
+        },
+        }}>
         
-        <Box sx={{ flex: 2 }}>
-            <Item>
-                <Typography variant='body1'>{item.name}</Typography>
-            </Item>
-        </Box>
-
-        <Box sx={{ flex: 1, alignSelf: 'flex-end' }}>
-            <Stack spacing={0}>
-                <Item>Sell to: {item.bestPlace} </Item>
+            <Box sx={{ flex: 1, alignSelf: 'flex-start' }}>
                 <Item>
-                {item.bestPrice}
-                {'Flea Market' === item.bestPlace ? (
-                    <Typography
-                    component='span'
-                    color={item.changePercent > 0 ? 'red' : 'green'}
-                    >
-                    <sup>
-                        {item.changePercent}% {item.changePrice}
-                    </sup>
-                    </Typography>
-                ) : (
-                    ''
-                )}
+                    <img
+                    src={item.iconURL}
+                    alt={item.name}
+                    loading='lazy'
+                    style={{ maxWidth: '100%' }}
+                    />
                 </Item>
-            </Stack>
-        </Box>
+            </Box>
+            
+            <Box sx={{ flex: 2 }}>
+                <Item>
+                    <Typography variant='body1'>{item.name}</Typography>
+                </Item>
+            </Box>
 
-                    
-    
-    </AccordionSummary>
-        {selectedItem === item.id && <ItemDetail itemId={item.id} />}
-    </Accordion>
-    
-    ))}
+            <Box sx={{ flex: 1, alignSelf: 'flex-end' }}>
+                <Stack spacing={0}>
+                    <Item>Sell to: {item.bestPlace} </Item>
+                    <Item>
+                    {item.bestPrice}
+                    {'Flea Market' === item.bestPlace ? (
+                        <Typography
+                        component='span'
+                        color={item.changePercent > 0 ? 'red' : 'green'}
+                        >
+                        <sup>
+                            {item.changePercent}% {item.changePrice}
+                        </sup>
+                        </Typography>
+                    ) : (
+                        ''
+                    )}
+                    </Item>
+                </Stack>
+            </Box>
 
-    <Pagination
-    count={Math.ceil(showItem.length / itemsPerPage)}
-    page={page}
-    onChange={paginationHandleChange}
-    sx={{ mt: 2 }}
-    />
+        </AccordionSummary>
+        {/* AccordionDetails in ItemDetails*/}
+            {selectedItem === item.id && <ItemDetail itemId={item.id} />}
+        </Accordion>
+        
+        ))}
+
+        <Pagination
+        count={Math.ceil(showItem.length / itemsPerPage)}
+        page={page}
+        onChange={paginationHandleChange}
+        sx={{ mt: 2 }}
+        />
     </>
     )
 }

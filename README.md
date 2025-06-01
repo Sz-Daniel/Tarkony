@@ -84,11 +84,10 @@ ItemDetails (see below)
 Accordion mostly displays simple text, so I had to override its parent component to improve layout.
 Yes, the console currently looks bad due to the category structure, which is why I plan to refactor that component. For now, it’s functional.
 
-### `ItemLDetail.tsx`
+### `ItemDetail.tsx`
 
 Part of ItemList. This simple component receives an item ID and fetches its remaining data.
-Currently, it renders a basic table to verify data integrity — a first iteration.
-Planned: introduce a box-based layout consistent with ItemList and a feature-rich MUIHover.
+Currently, it renders a box-based layout to verify data integrity, and with hover will shows the deals for that
 
 ### `MUIHover.tsx`
 
@@ -115,10 +114,9 @@ Testing and miscellaneous types; will be sorted later.
 
 ### Next:
  - Category select - next: levels show
- - Item details: Boxes and Hovering
  - Daily price update
  - Routing - "All detail" single item page
- - Searchbar - Autocomplete?
+ - Searchbar - Autocomplete? -> single item page
 
 
 ---
