@@ -1,28 +1,230 @@
-//Need to polish
-export function shortItemsListAdapter(data: any) {
-  return data.map((item: any)=>({
-    id: item.id,
-    name: item.name,
-    iconURL: item.gridImageLink,
-    traderPrice: item.sellFor.reduce(
-      (acc:number,cv:any,ci:number)=> 
-        acc < cv.priceRUB ? acc = cv.priceRUB : acc
-    ,0),
-    traderName: item.sellFor[ 
-      item.sellFor.reduce(
-        (minIdx:number,cv:any,ci:number, src:any)=> 
-          src[minIdx].priceRUB < cv.priceRUB ? minIdx = ci : minIdx
-    ,0)]?.vendor?.name, 
-    lowestPrice: item.lastLowPrice,
-    lastPrice: item.avg24hPrice,
-    diffPrice: Math.floor( (item.avg24hPrice / item.lastLowPrice) * 100) / 100,
-    category: item.category.normalizedName,
-    wiki: item.wikiLink
-  }))   
+import type { ItemBaseQueryType, ItemDetailQueryType, QueryType, traderForType } from "../types/queryType";
+import type { ItemBaseResultType, ItemDetailResultType } from "../types/responseType";
+
+export const TESTQuery = {
+  name: 'TESTQuery',
+  query: `
+  query{
+     itemCategories {
+      id
+      name
+      normalizedName
+      children {
+        id
+      }
+      parent {
+        id
+      }
+    }
+  }`
 }
 
-export const shortItemsListQuery = {
-  name: 'shortItemsListQuery',
+// Queries refactoring, ?? values, new Adapter
+export function itemBaseQueryAdapter(data: ItemBaseQueryType[]): ItemBaseResultType[] {
+  const bestSeller = (sellers: traderForType[]) => {
+    if (!sellers || sellers.length === 0) return null;
+    return sellers.reduce((best, current) =>
+      current.priceRUB > best.priceRUB ? current : best
+    );
+  };
+  return data.map((item: ItemBaseQueryType)=>{
+    const top = bestSeller(item.sellFor);
+      return {
+      id: item.id ?? null,
+      name: item.name ?? "",
+      iconURL: item.gridImageLink ?? "",
+      bestPrice: top?.priceRUB ?? null,
+      bestPlace: top?.vendor?.name ?? null,
+      changePrice: item.changeLast48h ?? 0,
+      changePercent: item.changeLast48hPercent ?? 0,
+      category: item.category.normalizedName ?? "",
+    }
+  })   
+}
+
+export const itemBaseQuery = {
+  name: 'itemBaseQuery',
+  query: `   
+  query {
+    items {
+      id
+      name
+      category {
+        normalizedName,
+      } 
+      gridImageLink
+      changeLast48h
+      changeLast48hPercent
+      sellFor{ 
+        priceRUB
+        vendor{
+          name
+        }
+      }
+   
+    } 
+  }`
+}
+
+export const categoriesQuery = {
+  name: 'categoriesQuery',
+  query: `
+  query{
+     itemCategories {
+      id
+      name
+      normalizedName
+      children {
+        normalizedName
+      }
+      parent {
+        normalizedName
+      }
+    }
+  }`
+}
+
+export function itemDetailsQueryAdapter(data: ItemDetailQueryType[]): ItemDetailResultType[] {
+  //functions
+  console.log("details data",data)
+  return data.map((item: ItemDetailQueryType)=>{
+    //att fix
+    return{
+      id: item.id ?? null,
+      wiki: item.wikiLink ?? "",
+      sellOffer: item.sellFor.map((sell)=>{
+        return{
+          price: sell.priceRUB ?? 0,
+          vendor: sell.vendor.name ?? "",
+        }
+      }),
+      buyOffer: item.buyFor.map((buy)=>{
+        return{
+          price: buy.priceRUB ?? 0,
+          vendor: buy.vendor.name ?? "",
+        }
+      }),
+      bartersNeeds: item.bartersFor.flatMap((req) => 
+        req.requiredItems.map((needs) => ({
+          count: needs.count ?? 0,
+          name: needs.item.name ?? "",
+          icon: needs.item.gridImageLink ?? "",
+        }))
+      ),
+      bartersGive: item.bartersUsing.flatMap((rew)=> 
+        rew.rewardItems.map((gives)=>({      
+          count: gives.count ?? 0,
+          name: gives.item.name ?? "",
+          icon: gives.item.gridImageLink ?? "",
+        }))
+      ),
+      craftsNeeds: item.craftsFor.flatMap((req)=>
+        req.requiredItems.map((needs)=>({      
+          count: needs.count ?? 0,
+          name: needs.item.name ?? "",
+          icon: needs.item.gridImageLink ?? "",
+        }))
+      ),
+      craftsGive:item.craftsUsing.flatMap((rew)=>
+         rew.rewardItems.map((gives)=>({      
+          count: gives.count ?? 0,
+          name: gives.item.name ?? "",
+          icon: gives.item.gridImageLink ?? "",
+        }))
+      ),
+      tasksRewards: item.receivedFromTasks.flatMap((rew) => {
+        const found = rew.finishRewards.items.findIndex((rewardItem) => 
+          rewardItem.item.name.includes(item.name)
+        );
+        if (found >= 0) {
+          return [{
+            name: rew.name ?? "",
+            count: rew.finishRewards.items[found].count ?? 0,
+          }];
+        }
+        return [];
+      })
+
+    }
+  })
+}
+
+export const itemDetailsQuery = (id: string = ""): QueryType => {
+  return {
+    name: `itemDetails-${id}`,
+    query: `   
+    query {
+      items(ids: "${id}") {
+        id
+        name
+        wikiLink
+        sellFor{ 
+          priceRUB
+          vendor{
+            name,
+          }
+        }
+        buyFor{ 
+          priceRUB
+          vendor{
+            name,
+          }
+        }
+        bartersFor {
+          requiredItems {
+            count
+            item {
+              gridImageLink
+              name
+            }
+          }
+        }
+        bartersUsing {
+          rewardItems {
+            count
+            item {
+              gridImageLink
+              name
+            }
+          }
+        }
+        craftsFor {
+          requiredItems {
+            count
+            item {
+              gridImageLink
+              name
+            }
+          }
+        }
+        craftsUsing {
+          rewardItems {
+            count
+            item {
+              gridImageLink
+              name
+            }
+          }
+        }
+        receivedFromTasks {
+          name
+          finishRewards {
+            items {
+              item {
+                name
+              }
+              count
+            }
+          }
+        }
+
+      }  
+    }`
+  }
+}
+
+export const fullItemsListQuery = {
+  name: 'fullItemsListQuery',
   query: `   
   query {
     items {
@@ -40,25 +242,67 @@ export const shortItemsListQuery = {
       category {
         normalizedName,
       }
-      wikiLink     
+      wikiLink
+      usedInTasks {
+        name
+        objectives {
+          type
+          ... on TaskObjectiveItem {
+            item {
+              name
+            }
+            foundInRaid
+            count
+          }
+        }
+      }
+      receivedFromTasks {
+        name
+        finishRewards {
+          items {
+            item {
+              name
+            }
+            count
+          }
+        }
+      }
+      bartersFor {
+        requiredItems {
+          count
+          item {
+            gridImageLink
+            name
+          }
+        }
+      }
+      bartersUsing {
+        rewardItems {
+          count
+          item {
+            gridImageLink
+            name
+          }
+        }
+      }
+      craftsFor {
+        requiredItems {
+        count
+          item {
+            gridImageLink
+            name
+          }
+        }
+      }
+      craftsUsing {
+        rewardItems {
+          count
+          item {
+            gridImageLink
+            name
+          }
+        }
+      }     
     } 
-  }`
-}
-
-export const categoriesQuery = {
-  name: 'categoriesQuery',
-  query: `
-  query{
-     itemCategories {
-      id
-      name
-      normalizedName
-      children {
-        name
-      }
-      parent {
-        name
-      }
-    }
   }`
 }

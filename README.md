@@ -1,4 +1,4 @@
-# Tarkony
+# Tarkony - 2025.06.01
 
 ## Overview
 
@@ -34,8 +34,16 @@ Tarkony
 ├── public/
 ├── src/
 │   ├── api/
+│   │   ├── old/ 
 │   │   ├── graphQLClient.ts
 │   │   └── query.ts
+│   ├── components/
+│   │   ├── CategoryMenu.tsx
+│   │   ├── ItemList.ts
+│   │   └── ItemDetail.ts
+│   ├── types/
+│   │   ├── responseType.ts 
+│   │   └── queryType.ts
 │   ├── devtools/
 │   │   └── dataShow.tsx
 │   ├── App.tsx
@@ -45,29 +53,73 @@ Tarkony
 ```
 ## Key Modules
 
-### `query.ts`
+### `dataShow.tsx`
 
-Contains the fragments for every GraphQL call used on the site, paired with adapters to process fetch results directly.  
-*Note:* Earlier, queries were dynamically generated, but adding new fragments required manual container updates — a limitation worth reconsidering.
+Still used as a dev tool playground; later it will be merged into App.tsx.
+This file currently executes the initial API calls using the useQuery hook and manages category display logic.
+
 
 ### `graphQLClient.ts`
 
-This module handles request logic using Axios, executing pre-rendered queries dynamically with an easy async interface: `fetchGraphQL('FragmentName')`.
+This module handles request logic using Axios, dynamically fetching pre-defined queries through a custom hook (useQuery).
+In progress: creating a standalone (non-hook) async function using fetchQuery.
 
-### `dataShow.tsx`
+### `CategoryMenu.tsx`
 
-A simple component page used for testing the fetching functionality.
+This component handles category selection, allowing the user to browse items by category.
+Currently: only downward mapping is implemented. Planned: a full bidirectional (up-down) browsing structure that maintains visibility of parent categories, improving usability.
+
+### `ItemList.tsx`
+
+This displays items from the selected category. Data is retrieved from QueryData, fetched by dataShow.
+The query format is intentionally concise to avoid overloading the system, as there are 4000+ items, each with extensive associated data.
+The list includes several MUI components, most notably:
+
+Paginator
+
+Accordion: many details per item are displayed in collapsible panels, keeping the UI clean
+
+ItemDetails (see below)
+
+Accordion mostly displays simple text, so I had to override its parent component to improve layout.
+Yes, the console currently looks bad due to the category structure, which is why I plan to refactor that component. For now, it’s functional.
+
+### `ItemLDetail.tsx`
+
+Part of ItemList. This simple component receives an item ID and fetches its remaining data.
+Currently, it renders a basic table to verify data integrity — a first iteration.
+Planned: introduce a box-based layout consistent with ItemList and a feature-rich MUIHover.
+
+### `MUIHover.tsx`
+
+I don't want to overload the detail view with too much information (as of 06.01).
+I'd like to keep it simple yet effective. The idea is to display short tags per data group — for example, the number of barter-related items.
+On hover, it will show the icons of those related items. For instance, the "Bottle of Water" item on the first page.
+This logic will be generalized across other detailed data groups. The goal is to simplify rendering while improving clarity.
+
+### `queryType.ts`
+
+Contains all query and fragments for every GraphQL call used on the site, paired with adapters to process fetch results directly.  
+
+### `responseType.ts`
+
+Stores target type structures after Adapter processing.
+
+### `type.ts`
+
+Testing and miscellaneous types; will be sorted later.
 
 ---
 
-## Junior Journal - 2025.05.26
+## Junior Journal - 2025.06.01
 
-### Roadmap:
+### Next:
+ - Category select - next: levels show
+ - Item details: Boxes and Hovering
+ - Daily price update
+ - Routing - "All detail" single item page
+ - Searchbar - Autocomplete?
 
-- Item details: Barter, Task, craft needs show 
-- Searchbar - works same as category
-- Daily price update
-- Routing - "All detail" single item page
 
 ---
 
@@ -100,4 +152,8 @@ Fetching roadmap:
 - Introduction of a dynamic query object
 - Addition of an adapter to handle varying data structures
 - Transition to cache-based data storage and access
+
+Later: At ItemDetails, I considered creating a regular fetch function (not a hook).
+I ran into problems with fetchQuery, and I still don't fully understand the issue.
+While ItemDetails may be more efficient as a hook, I still plan to implement the plain function version, just to learn from the process and understand how not to approach it.
 
