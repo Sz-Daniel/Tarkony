@@ -1,23 +1,21 @@
 
 import { AccordionDetails, Box, Link, Typography } from "@mui/material"
-import { useFetchIntoCache } from "../api/graphQLClient"
-import { itemDetailsQuery, itemDetailsQueryAdapter } from "../api/query";
-import { useEffect } from "react";
-import type { ItemDetailPropsType } from "../types/type";
-import type { ItemDetailQueryType } from "../types/queryType";
-import type { ItemDetailResultType } from "../types/responseType";
+import {  useEffect } from "react";
 import { MUIHover } from "./MUIHover";
 import { styled } from "@mui/system";
+import type { ItemDetailPropsType } from "../types/type";
+import { useItemDetailQuery } from "../api/graphQLClient";
+import type { ItemDetailResultType } from "../types/responseType";
+
 
 export function ItemDetail({itemId}:ItemDetailPropsType) {
 
-    const { data, isSuccess, isLoading, status } = useFetchIntoCache<ItemDetailQueryType[],ItemDetailResultType[]>(itemDetailsQuery(itemId),itemDetailsQueryAdapter);
-
+    const { data, isSuccess, isLoading, status } = useItemDetailQuery(itemId);
+    const item = isSuccess && data && data.length > 0 ? data[0] as ItemDetailResultType : null;
+   
     useEffect(()=>{
         console.log("details",data, status)
     },[isSuccess, data]);
-
-    const item = isSuccess && data && data.length > 0 ? data[0] as ItemDetailResultType : null;
 
     const Item = styled(Box)(({ theme }) => ({
         padding: theme.spacing(2),

@@ -1,4 +1,15 @@
-# Tarkony - 2025.06.01
+# Tarkony - 2025.06.02
+
+### Done:
+
+- SearchBar – filters the displayed data based on user input
+- Singleton API call variants – simplified, pre-configured versions of API calls for easier reuse
+
+### Next:
+
+- Routing - "All detail" single item page
+- Guide modal
+- Category refactoring
 
 ## Overview
 
@@ -40,14 +51,16 @@ Tarkony
 │   ├── components/
 │   │   ├── CategoryMenu.tsx
 │   │   ├── ItemList.ts
-│   │   └── ItemDetail.ts
+│   │   ├── ItemDetail.ts
+│   │   ├── MUIHover.ts
+│   │   └── SearchBar.ts
 │   ├── types/
 │   │   ├── responseType.ts 
-│   │   └── queryType.ts
+│   │   ├── queryType.ts
+│   │   └── type.ts
 │   ├── devtools/
 │   │   └── dataShow.tsx
-│   ├── App.tsx
-│   └── type.ts
+│   └── App.tsx
 ├── index.html
 └── README.md
 ```
@@ -58,11 +71,12 @@ Tarkony
 Still used as a dev tool playground; later it will be merged into App.tsx.
 This file currently executes the initial API calls using the useQuery hook and manages category display logic.
 
-
 ### `graphQLClient.ts`
 
-This module handles request logic using Axios, dynamically fetching pre-defined queries through a custom hook (useQuery).
-In progress: creating a standalone (non-hook) async function using fetchQuery.
+
+This module manages GraphQL request logic using Axios, integrating with useQuery to fetch pre-defined queries via custom hooks.
+For direct usage, parameterized custom hooks are available as singleton query functions.
+In progress: developing a standalone asynchronous fetch function (fetchQuery), not tied to React hooks.
 
 ### `CategoryMenu.tsx`
 
@@ -96,6 +110,11 @@ I'd like to keep it simple yet effective. The idea is to display short tags per 
 On hover, it will show the icons of those related items. For instance, the "Bottle of Water" item on the first page.
 This logic will be generalized across other detailed data groups. The goal is to simplify rendering while improving clarity.
 
+### `SearchBar.tsx`
+
+As part of the search functionality, a SearchBar component was created.
+It receives a delayed setter function from ItemList, which updates a keyword used for filtering the item list.
+
 ### `queryType.ts`
 
 Contains all query and fragments for every GraphQL call used on the site, paired with adapters to process fetch results directly.  
@@ -112,14 +131,6 @@ Testing and miscellaneous types; will be sorted later.
 
 ## Junior Journal - 2025.06.01
 
-### Next:
- - Category select - next: levels show
- - Daily price update
- - Routing - "All detail" single item page
- - Searchbar - Autocomplete? -> single item page
-
-
----
 
 ## Reflections on fetching implementation
 
@@ -140,9 +151,10 @@ The hook is integrated with React Query, thus it:
 
 - Caches the response data using query.name as the cache key
 - Retains data across navigation events
-- Refreshes data on a daily basis via the staleTime setting
+- Refreshes data on a weekly basis via the staleTime setting
 
 Rather than returning the fetched data directly, the hook writes it into the React Query cache. The data can later be accessed using queryClient.getQueryData(...), even across multiple components.
+For improved clarity and cleaner parameter handling, singleton-style versions of the hooks were introduced. These are easier to call and reason about, without side effects or unnecessary parameter pollution.
 
 Fetching roadmap:
 
@@ -150,6 +162,7 @@ Fetching roadmap:
 - Introduction of a dynamic query object
 - Addition of an adapter to handle varying data structures
 - Transition to cache-based data storage and access
+- Singleton versions
 
 Later: At ItemDetails, I considered creating a regular fetch function (not a hook).
 I ran into problems with fetchQuery, and I still don't fully understand the issue.

@@ -1,24 +1,6 @@
 import type { ItemBaseQueryType, ItemDetailQueryType, QueryType, traderForType } from "../types/queryType";
 import type { ItemBaseResultType, ItemDetailResultType } from "../types/responseType";
 
-export const TESTQuery = {
-  name: 'TESTQuery',
-  query: `
-  query{
-     itemCategories {
-      id
-      name
-      normalizedName
-      children {
-        id
-      }
-      parent {
-        id
-      }
-    }
-  }`
-}
-
 // Queries refactoring, ?? values, new Adapter
 export function itemBaseQueryAdapter(data: ItemBaseQueryType[]): ItemBaseResultType[] {
   const bestSeller = (sellers: traderForType[]) => {
@@ -65,6 +47,30 @@ export const itemBaseQuery = {
     } 
   }`
 }
+
+export const searchNameItemBaseQuery = (name: string = ""): QueryType => {
+  return {
+  name: `searchNameItemBaseQuery`,
+  query: `   
+  query{
+    items(name: "${name}") {
+      id
+      name
+      category {
+        normalizedName
+      }
+      gridImageLink
+      changeLast48h
+      changeLast48hPercent
+      sellFor {
+        priceRUB
+        vendor {
+          name
+        }
+      }
+    }
+  }
+`}}
 
 export const categoriesQuery = {
   name: 'categoriesQuery',

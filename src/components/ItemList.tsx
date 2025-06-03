@@ -6,9 +6,12 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { ItemDetail } from "./ItemDetail";
 import type { selectedCategoryType } from "../types/type";
 import type { ItemBaseResultType } from "../types/responseType";
+import { SearchBar } from "./SeachBar";
 
 
 export function ItemList({selectedCategory, setSelectedCategory}:selectedCategoryType) {
+
+    const [searchedName, setSearchedName] = useState<string>('')
 
     const [page, setPage] = useState(1);
     const [showItem,setShowItem] = useState<ItemBaseResultType[]>([]);
@@ -18,15 +21,24 @@ export function ItemList({selectedCategory, setSelectedCategory}:selectedCategor
     const itemBaseListCache: ItemBaseResultType[] = queryClient.getQueryData([itemBaseQuery.name])?? [];
 
     useEffect(() => {
+
         if (selectedCategory.length === 1 && selectedCategory.includes("item")) {
-            console.log(selectedCategory)
             setShowItem(itemBaseListCache);
+
         } else {
             setShowItem(
                 itemBaseListCache.filter((item) => selectedCategory.includes(item.category))
             );
         }
-    }, [selectedCategory, itemBaseListCache]);
+        if (searchedName !== '') {
+            const lowerSearch = searchedName.toLowerCase();
+            setShowItem(
+                showItem.filter((item) =>
+                item.name.toLowerCase().includes(lowerSearch))
+            );
+        }
+
+    }, [itemBaseListCache, selectedCategory,searchedName]);
 
     const accordionHandleChange =
         (panel: string) => async (event: React.SyntheticEvent) => {
@@ -53,6 +65,19 @@ export function ItemList({selectedCategory, setSelectedCategory}:selectedCategor
 
     return(
     <>
+
+        {/**searchbar input
+         * selected category <- context state
+         * setShowItem 
+         * input text delay 1 sec -> searchedWord state -> hook with that state 
+         * useEffect for hook data -> setShowItem by cache with filter (utility function?)
+         * if searchedWordState cleared for 1 sec setShowItem with itemBaseListCache
+         * ts file? 
+         * 
+         * + daily price for datashow
+         */}
+
+        <SearchBar setSearchedName={setSearchedName}/>
         {paginatedItems.map((item: any) => (
 
         <Accordion 
