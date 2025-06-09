@@ -12,6 +12,7 @@ export function Items(){
   
   return (
   <>
+    <div>Select a Category</div>
     <CategoryMenu selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory}/>
     <ItemList selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
   </>
