@@ -16,9 +16,12 @@
     "@mui/material": "^7.1.0",
     "@tanstack/react-query": "^5.76.1",
     "axios": "^1.9.0",
+    "eventemitter3": "^5.0.1",
     "graphql": "^16.11.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.2",
+    "reactjs-eventemitter": "^1.0.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

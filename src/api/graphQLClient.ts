@@ -1,64 +1,48 @@
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
-import { categoriesQuery, itemBaseQuery, itemBaseQueryAdapter, itemDetailsQuery, itemDetailsQueryAdapter } from "./query";
-import type{ ItemBaseQueryType,  CategoryType, ItemDetailQueryType,  QueryType } from "../types/queryType";
-import type { ItemBaseResultType,  ItemDetailResultType } from "../types/responseType";
+import type{ QueryType } from "../types/items/queryType";
+import { Logger } from "../devtools/Logger";
 
-
-//param for weekly-daily etc 
 const STALE_TIME_WEEKLY = 1000 * 60 * 60 * 24 * 7;
-const STALE_TIME_DAILY = 1000 * 60 * 60 * 24;
 
-//use this pattern to data for destructed data 
-//const item = isSuccess && data && data.length > 0 ? data[0] as ItemDetailResultType : null;
-/**
- * Singletons from useFetchIntoCache to direct use.
- */
-export function useCategoryQuery(){
-    return useFetchIntoCache<CategoryType[]>(categoriesQuery);
-}
-
-export function useItemDetailQuery(itemId:string){
-    return useFetchIntoCache<ItemDetailQueryType[],ItemDetailResultType[]>(itemDetailsQuery(itemId),itemDetailsQueryAdapter);
-}
-
-export function useItemBaseListQuery(){
-    return useFetchIntoCache<ItemBaseQueryType[],ItemBaseResultType[]>(itemBaseQuery,itemBaseQueryAdapter);
-}
-
-/** Custom hooks for "easy" factory API calls.
- *  
- * @param query which include a name for cache name, and the quary description
- * @param adapter optional in case we need to polish the data before using it 
- * @returns with the @path which skip the data.data.queryType objects and store just the dataArray
+/**  
+ * @param query which contains a name for cache name, query key (desc in return) and the query call string
+ * @param adapter optional for formatting the query response data for convertible to usable data
+ * @returns with the query key data objects will sorted out and return only the array, opcionally it can reformat the data structure for easier usage with adapter
  */
 
- export function useFetchIntoCache<Q, A = Q>(
+ export function useFetchIntoCache<TQuery, TAdapter = TQuery>(
     query: QueryType,
-    adapter?: (data: Q ) => A,
+    adapter?: (data: TQuery ) => TAdapter,
     refreshTime = STALE_TIME_WEEKLY
 ) {
     return useQuery({
         queryKey: [query.name],
         queryFn: async() => {
             const raw = await fetchGQLwQuery(query.query);
-            const useableField = Object.values(raw.data)[0] as Q; 
-            if (adapter) {
-                return adapter(useableField);        
-            } 
-            return useableField
+             console.log("singleItemAdapter raw",raw)
+            const useableField = raw.data[query.key] as TQuery; 
+            const result = adapter ? adapter(useableField) : useableField
+            Logger.add(query.name+" useFetchIntoCache", result)
+            return result
         },
         staleTime: refreshTime,
     });
 }
 
-//APIQuery ini
+
 export async function fetchGQLwQuery( query: string) {
-    const response = await gqlClient.post('', { query: query })
-    if (response.data.errors) {
-        throw new Error(JSON.stringify(response.data.errors));
+    try {
+        const response = await gqlClient.post('', { query });
+        if (response.data.errors) {
+            Logger.add('GraphQL Error', response.data.errors);
+            throw new Error(JSON.stringify(response.data.errors));
+        }
+        return response.data;
+    } catch (error) {
+        Logger.add('Network or Axios Error', error);
+        throw error;
     }
-    return await response.data
 }
 
 //Initalize Axios client

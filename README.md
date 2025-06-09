@@ -1,15 +1,15 @@
-# Tarkony - 2025.06.02
+# Tarkony - 2025.06.06
 
 ### Done:
-
-- SearchBar – filters the displayed data based on user input
-- Singleton API call variants – simplified, pre-configured versions of API calls for easier reuse
+- Routing
+- ItemSingle page ini
+- Refactored: Logger system, Category fully refactoring, Commenting files + CleanCode 
 
 ### Next:
 
-- Routing - "All detail" single item page
+- Category UI
+- Item Single page UI
 - Guide modal
-- Category refactoring
 
 ## Overview
 
@@ -49,39 +49,50 @@ Tarkony
 │   │   ├── graphQLClient.ts
 │   │   └── query.ts
 │   ├── components/
-│   │   ├── CategoryMenu.tsx
-│   │   ├── ItemList.ts
-│   │   ├── ItemDetail.ts
-│   │   ├── MUIHover.ts
-│   │   └── SearchBar.ts
+│   │   ├── Items/
+│   │   │   ├── CategoryMenu.tsx
+│   │   │   ├── ItemDetails.tsx
+│   │   │   └── ItemList.tsx
+│   │   ├── layout./
+│   │   │   ├── Footer.tsx
+│   │   │   └── LoggerComponents.tsx
+│   │   └── ui/
+│   │   │   ├── MUIHover.tsx
+│   │   │   └── SearchBar.tsx
+│   ├── hooks/
+│   │   └── APICalls.ts
+│   ├── pages/
+│   │   ├── Items.tsx 
+│   │   ├── MainLayout.tsx 
+│   │   └── ItemSingle.tsx
 │   ├── types/
-│   │   ├── responseType.ts 
-│   │   ├── queryType.ts
-│   │   └── type.ts
+│   │   ├── item/ 
+│   │   └── items/
 │   ├── devtools/
-│   │   └── dataShow.tsx
+│   │   ├── utility.ts
+│   │   └── Logger.tsx
 │   └── App.tsx
 ├── index.html
 └── README.md
 ```
 ## Key Modules
 
-### `dataShow.tsx`
+## Routing
+  '/' -> Items.tsx
+  '/items/normalizedName' -> ItemSingle.tsx
 
-Still used as a dev tool playground; later it will be merged into App.tsx.
-This file currently executes the initial API calls using the useQuery hook and manages category display logic.
-
-### `graphQLClient.ts`
-
+### `graphQLClient.ts` + `query.ts`
 
 This module manages GraphQL request logic using Axios, integrating with useQuery to fetch pre-defined queries via custom hooks.
-For direct usage, parameterized custom hooks are available as singleton query functions.
 In progress: developing a standalone asynchronous fetch function (fetchQuery), not tied to React hooks.
+
+### `APICalls.ts`
+
+For direct usage, parameterized custom hooks from `graphQLClient.ts`, are available as Single query functions.
 
 ### `CategoryMenu.tsx`
 
 This component handles category selection, allowing the user to browse items by category.
-Currently: only downward mapping is implemented. Planned: a full bidirectional (up-down) browsing structure that maintains visibility of parent categories, improving usability.
 
 ### `ItemList.tsx`
 
@@ -95,8 +106,10 @@ Accordion: many details per item are displayed in collapsible panels, keeping th
 
 ItemDetails (see below)
 
+SearchBar (see below)
+
 Accordion mostly displays simple text, so I had to override its parent component to improve layout.
-Yes, the console currently looks bad due to the category structure, which is why I plan to refactor that component. For now, it’s functional.
+
 
 ### `ItemDetail.tsx`
 
@@ -123,9 +136,6 @@ Contains all query and fragments for every GraphQL call used on the site, paired
 
 Stores target type structures after Adapter processing.
 
-### `type.ts`
-
-Testing and miscellaneous types; will be sorted later.
 
 ---
 
@@ -154,7 +164,7 @@ The hook is integrated with React Query, thus it:
 - Refreshes data on a weekly basis via the staleTime setting
 
 Rather than returning the fetched data directly, the hook writes it into the React Query cache. The data can later be accessed using queryClient.getQueryData(...), even across multiple components.
-For improved clarity and cleaner parameter handling, singleton-style versions of the hooks were introduced. These are easier to call and reason about, without side effects or unnecessary parameter pollution.
+For improved clarity and cleaner parameter handling, Single versions of the hooks were introduced. These are easier to call and reason about, without side effects or unnecessary parameter pollution.
 
 Fetching roadmap:
 
@@ -162,7 +172,7 @@ Fetching roadmap:
 - Introduction of a dynamic query object
 - Addition of an adapter to handle varying data structures
 - Transition to cache-based data storage and access
-- Singleton versions
+- Single versions
 
 Later: At ItemDetails, I considered creating a regular fetch function (not a hook).
 I ran into problems with fetchQuery, and I still don't fully understand the issue.

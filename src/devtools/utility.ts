@@ -1,4 +1,4 @@
-import type { CategoryType } from "../types/queryType";
+import type { CategoryType } from "../types/items/queryType";
 
 export function printCategoryTree(
     categories: CategoryType[],

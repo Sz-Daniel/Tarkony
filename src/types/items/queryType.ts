@@ -1,16 +1,21 @@
+/** Query type for API GraphQL calls -> api \ query.ts
+ * name: key name for cache
+ * key: Type key which indicate what kinda data result obj will get and helps to give back only the array
+ * query: containts query string
+ */
 export type QueryType = {
-  name: string;
-  query: string;
-  variables?: { id: string }; // ez szigorúbb, de ha csak ez kell, működik
+  name: string,
+  key: string,
+  query: string,
 };
 
-export type ItemCategoriesType<T> = { itemCategories: T[]}
 export type CategoryType = BaseType &{
   children: normalizedName[],
   parent: normalizedName,
-}
+  
+};
 
-export type ItemsType<T> = {  items: T[] }
+
 export type ItemBaseQueryType = {
   id: string,
   name: string,
@@ -19,11 +24,12 @@ export type ItemBaseQueryType = {
   changeLast48hPercent: number,
   sellFor: traderForType[]
   category: normalizedName,
-}
+};
 
 export type ItemDetailQueryType = {
   id: string,
-  name: string,
+  name:string,
+  normalizedName: string,
   wikiLink: string,
   sellFor:traderForType[],
   buyFor:traderForType[],
@@ -32,53 +38,7 @@ export type ItemDetailQueryType = {
   craftsFor:requiredItemsType[],
   craftsUsing: rewardItemsType[],
   receivedFromTasks: receivedFromTasksType[],
-}
-
-//sideType
-type receivedFromTasksType ={
-  name:string,
-  finishRewards: rewardTaskType  
-}
-type rewardTaskType = {
-  items: items[]
-}
-
-type items = {
-  count: number,
-  item: item,
-}
-
-type item = {
-  name: string,
-}
-
-export type requiredItemsType = {
-  requiredItems: CountedItem[];
 };
-
-type rewardItemsType = {
-  rewardItems: CountedItem[];
-};
-
-type CountedItem = {
-  count: number;
-  item: itemIcon;
-};
-
-type itemIcon = {
-    name: string,
-    gridImageLink: string,
-}
-
-type name ={
-  name: string
-}
-
-
-export type traderForType={
-  priceRUB:number,
-  vendor: name
-}
 
 type BaseType = {
   id: string,
@@ -86,7 +46,51 @@ type BaseType = {
   normalizedName: string,
 };
 
+export type traderForType={
+  priceRUB:number,
+  vendor: name
+};
+
+type requiredItemsType = {
+  requiredItems: CountedItem[];
+};
+
+type rewardItemsType = {
+  rewardItems: CountedItem[];
+};
+
+type receivedFromTasksType ={
+  name:string,
+  finishRewards: rewardTaskType  
+};
+
+type CountedItem = {
+  count: number;
+  item: itemIcon;
+};
+
+type rewardTaskType = {
+  items: items[]
+};
+
+type itemIcon = {
+    name: string,
+    gridImageLink: string,
+};
+
+type items = {
+  count: number,
+  item: item,
+};
+
+type item = {
+  name: string,
+};
+
 type normalizedName = {
     normalizedName: string,
-}
+};
 
+type name ={
+  name: string
+};

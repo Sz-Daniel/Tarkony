@@ -11,6 +11,7 @@ export type ItemBaseResultType = {
 
 export type ItemDetailResultType = {
   id: string | null,
+  normalizedName: string,
   wiki: string,
   sellOffer: VendorOffer[],
   buyOffer: VendorOffer[],
@@ -21,7 +22,6 @@ export type ItemDetailResultType = {
   tasksRewards: TaskReward[], 
 };
 
-//Side type
 type TaskReward = {
   name: string,
   count: number,

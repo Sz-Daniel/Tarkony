@@ -1,8 +1,14 @@
-import type { ItemBaseQueryType, ItemDetailQueryType, QueryType, traderForType } from "../types/queryType";
-import type { ItemBaseResultType, ItemDetailResultType } from "../types/responseType";
+import type { ItemBaseQueryType, ItemDetailQueryType, QueryType, traderForType } from "../types/items/queryType";
+import type { ItemBaseResultType, ItemDetailResultType } from "../types/items/responseType";
 
-// Queries refactoring, ?? values, new Adapter
-export function itemBaseQueryAdapter(data: ItemBaseQueryType[]): ItemBaseResultType[] {
+/** Queries
+ * 
+ *  Name usage for cache name 
+ *  Key type name a feldolgozás alatt objektum azonosításra hogy tömböt adhasson vissza a fetch
+ *  Query string for API call 
+ */
+
+export function itemBaseAdapter(data: ItemBaseQueryType[]): ItemBaseResultType[] {
   const bestSeller = (sellers: traderForType[]) => {
     if (!sellers || sellers.length === 0) return null;
     return sellers.reduce((best, current) =>
@@ -26,6 +32,7 @@ export function itemBaseQueryAdapter(data: ItemBaseQueryType[]): ItemBaseResultT
 
 export const itemBaseQuery = {
   name: 'itemBaseQuery',
+  key: 'items',
   query: `   
   query {
     items {
@@ -51,6 +58,7 @@ export const itemBaseQuery = {
 export const searchNameItemBaseQuery = (name: string = ""): QueryType => {
   return {
   name: `searchNameItemBaseQuery`,
+  key: 'items',
   query: `   
   query{
     items(name: "${name}") {
@@ -70,10 +78,12 @@ export const searchNameItemBaseQuery = (name: string = ""): QueryType => {
       }
     }
   }
-`}}
+`}
+}
 
 export const categoriesQuery = {
   name: 'categoriesQuery',
+  key: 'itemCategories',
   query: `
   query{
      itemCategories {
@@ -90,13 +100,15 @@ export const categoriesQuery = {
   }`
 }
 
-export function itemDetailsQueryAdapter(data: ItemDetailQueryType[]): ItemDetailResultType[] {
+export function itemDetailsAdapter(data: ItemDetailQueryType[]): ItemDetailResultType[] {
   //functions
   console.log("details data",data)
   return data.map((item: ItemDetailQueryType)=>{
     //att fix
     return{
       id: item.id ?? null,
+      name: item.name ?? "",
+      normalizedName: item.normalizedName ?? "",
       wiki: item.wikiLink ?? "",
       sellOffer: item.sellFor.map((sell)=>{
         return{
@@ -158,11 +170,13 @@ export function itemDetailsQueryAdapter(data: ItemDetailQueryType[]): ItemDetail
 export const itemDetailsQuery = (id: string = ""): QueryType => {
   return {
     name: `itemDetails-${id}`,
+    key: 'items',
     query: `   
     query {
       items(ids: "${id}") {
         id
         name
+        normalizedName
         wikiLink
         sellFor{ 
           priceRUB
@@ -229,86 +243,121 @@ export const itemDetailsQuery = (id: string = ""): QueryType => {
   }
 }
 
-export const fullItemsListQuery = {
-  name: 'fullItemsListQuery',
-  query: `   
+export const singleItemQuery  = (normalizedName: string = ""): QueryType => {
+  return {
+  name: `singleItemQuery-${normalizedName}`,
+  key: 'item',
+  query: `  
   query {
-    items {
-      id
-      avg24hPrice
+  item(normalizedName: "${normalizedName}") {
+    id
+    name
+    shortName
       lastLowPrice
-      name
-      gridImageLink
-      sellFor{ 
-        priceRUB
-        vendor{
-          name,
-        }
+  low24hPrice
+  avg24hPrice
+  high24hPrice
+  changeLast48hPercent
+  changeLast48h
+  lastOfferCount
+
+  width
+  weight
+  hasGrid
+
+  inspectImageLink
+  backgroundColor
+  gridImageLink
+
+  description
+  wikiLink
+
+  height
+  velocity
+  recoilModifier
+  loudness
+  accuracyModifier
+  ergonomicsModifier
+ 
+
+  historicalPrices {  offerCount
+  price
+  priceMin
+  timestamp}
+ sellFor{ 
+      priceRUB
+      vendor{
+        name,
       }
-      category {
-        normalizedName,
+    }
+  buyFor{ 
+      priceRUB
+      vendor{
+        name,
       }
-      wikiLink
-      usedInTasks {
-        name
-        objectives {
-          type
-          ... on TaskObjectiveItem {
-            item {
-              name
-            }
-            foundInRaid
-            count
-          }
-        }
-      }
-      receivedFromTasks {
-        name
-        finishRewards {
-          items {
-            item {
-              name
-            }
-            count
-          }
-        }
-      }
-      bartersFor {
-        requiredItems {
-          count
-          item {
-            gridImageLink
+            ... on TraderOffer {          
+          name
+          minTraderLevel
+          buyLimit
+          taskUnlock {
+            minPlayerLevel
             name
           }
-        }
-      }
-      bartersUsing {
-        rewardItems {
-          count
-          item {
-            gridImageLink
-            name
-          }
-        }
-      }
-      craftsFor {
-        requiredItems {
+    }
+
+    bartersFor {
+      requiredItems {
         count
-          item {
-            gridImageLink
-            name
-          }
+        item {
+          gridImageLink
+          name
         }
       }
-      craftsUsing {
-        rewardItems {
-          count
+    }
+
+    bartersUsing {
+      rewardItems {
+        count
+        item {
+          gridImageLink
+          name
+        }
+      }
+    }
+
+    craftsFor {
+      requiredItems {
+        count
+        item {
+          gridImageLink
+          name
+        }
+      }
+    }
+
+    craftsUsing {
+      rewardItems {
+        count
+        item {
+          gridImageLink
+          name
+        }
+      }
+    }
+
+    receivedFromTasks {
+      name
+      finishRewards {
+        items {
           item {
-            gridImageLink
             name
           }
+          count
         }
-      }     
-    } 
-  }`
+      }
+    }
+
+  } 
+} 
+`}
 }

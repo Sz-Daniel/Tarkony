@@ -3,10 +3,7 @@ export type ItemDetailPropsType = {
   itemId: string
 }
 
-export type selectedCategoryType = {
-  selectedCategory: string[],
-  setSelectedCategory: React.Dispatch<React.SetStateAction<string[]>>
-}
+
 export type numberStatePropsType = {
   number: number,
   setter: React.Dispatch<React.SetStateAction<number>>;

@@ -1,15 +1,18 @@
+import { Route, Routes } from 'react-router-dom'
 import './App.css'
-import { DataShow } from './devtools/dataShow'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-
+import { Items } from './pages/Items'
+import { ItemSingle } from './pages/ItemSingle'
+import { MainLayout } from './pages/MainLayout'
 function App() {
-  const queryClient = new QueryClient()
 
   return (
     <>
-      <QueryClientProvider client={queryClient}>
-        <DataShow />
-      </QueryClientProvider>
+        <Routes>
+          <Route element={<MainLayout/>}>
+            <Route path="/" element={<Items/>}/>
+            <Route path="/items/:normalizeName" element={<ItemSingle />} />
+          </Route>
+        </Routes>
     </>
   )
 }

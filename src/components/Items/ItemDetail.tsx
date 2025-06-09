@@ -1,34 +1,32 @@
-
-import { AccordionDetails, Box, Link, Typography } from "@mui/material"
+import { AccordionDetails, Box, Button, CircularProgress, Link, Typography } from "@mui/material"
 import {  useEffect } from "react";
-import { MUIHover } from "./MUIHover";
+import { MUIHover } from "../ui/MUIHover";
 import { styled } from "@mui/system";
-import type { ItemDetailPropsType } from "../types/type";
-import { useItemDetailQuery } from "../api/graphQLClient";
-import type { ItemDetailResultType } from "../types/responseType";
+import type { ItemDetailPropsType } from "../../types/type";
+import type { ItemDetailResultType } from "../../types/items/responseType";
+import { useItemDetailQuery } from "../../hooks/APICalls";
+import { Navigate, Link as RouterLink, useNavigate } from "react-router-dom";
+
+export const Item = styled(Box)(({ theme }) => ({
+    padding: theme.spacing(2),
+    textAlign: 'center',
+}));
 
 
 export function ItemDetail({itemId}:ItemDetailPropsType) {
 
-    const { data, isSuccess, isLoading, status } = useItemDetailQuery(itemId);
+    const navigate = useNavigate();
+
+    const { data, isSuccess, isLoading } = useItemDetailQuery(itemId);
     const item = isSuccess && data && data.length > 0 ? data[0] as ItemDetailResultType : null;
    
-    useEffect(()=>{
-        console.log("details",data, status)
-    },[isSuccess, data]);
-
-    const Item = styled(Box)(({ theme }) => ({
-        padding: theme.spacing(2),
-        textAlign: 'center',
-    }));
-
     return(
     <>
-        {isLoading && <Typography>Isloading</Typography>}
+        {isLoading && <CircularProgress />}
         {item && 
+
         <AccordionDetails >
             <Box sx={{ display: 'flex', gap: 1}}>
-                
                 <Box sx={{ flex: 1, alignSelf: 'flex-start'}}>
                     <Typography> Trader: </Typography>
                 </Box>                
@@ -44,6 +42,7 @@ export function ItemDetail({itemId}:ItemDetailPropsType) {
                         </Box>
                     </MUIHover>
                 </Box>
+
                 <Box sx={{ flex: 1}}>
                     <MUIHover title={`Offer: ${item.buyOffer.length}`}>
                         <Box sx={{ display: 'flex', gap: 1 }}>
@@ -57,6 +56,7 @@ export function ItemDetail({itemId}:ItemDetailPropsType) {
                     </MUIHover>
                 </Box>
             </Box>
+
             <Box sx={{ display: 'flex', gap: 1 }}>
                 <Box sx={{ flex: 1}}>
                     <Typography> Barter: </Typography>
@@ -77,6 +77,7 @@ export function ItemDetail({itemId}:ItemDetailPropsType) {
                         </Box>
                     </MUIHover>
                 </Box>
+
                 <Box sx={{ flex: 1}}>
                     <MUIHover title={`Offer gives: ${item.bartersGive.length}`}>
                         <Box sx={{ display: 'flex', gap: 1 }}>
@@ -93,11 +94,14 @@ export function ItemDetail({itemId}:ItemDetailPropsType) {
                         </Box>
                     </MUIHover>
                 </Box>
+
             </Box>
             <Box sx={{ display: 'flex', gap: 1 }}>
+
                 <Box sx={{ flex: 1}}>
                     <Typography> Crafting:  </Typography>
                 </Box>   
+                
                 <Box sx={{ flex: 1}}>
                     <MUIHover title={`Needs for the craft: ${item.craftsNeeds.length}`}>
                         <Box sx={{ display: 'flex', gap: 1 }}>
@@ -169,9 +173,13 @@ export function ItemDetail({itemId}:ItemDetailPropsType) {
                 <Box sx={{ flex: 2, alignSelf: 'flex-start'}}>
                     <Link href={item.wiki}>Wiki</Link>
                 </Box>
-                <Box sx={{ flex: 2, alignSelf: 'flex-start'}}>
-                    <Typography>All data</Typography>
-                </Box>      
+
+                    <Button sx={{ flex: 2, alignSelf: 'flex-start'}}
+                    onClick={()=>{navigate(`/items/${item.normalizedName}`)}}
+                    >
+                        <Typography>All data</Typography>
+                    </Button>   
+
             </Box>
             </AccordionDetails>
         }

@@ -128,3 +128,141 @@ export function useFetchintoState<T, A = T>(
         }
     },[result.data])
 }
+
+
+/**
+Suggested, but not used still
+1. A jelenlegi adatstruktúra rövid áttekintése
+A CategoryType egy lapos tömb eleme, ahol minden elem ismeri a saját normalizedName mezőjét, valamint:
+
+egy parent-et, ami szintén csak normalizedName-et tartalmaz,
+
+és egy children tömböt, ami normalizedName-eket tartalmaz.
+
+Ez azt jelenti, hogy nem fa, hanem gráf jellegű struktúra (a kapcsolatok csak normalizedName mezőkkel történnek), tehát nem beágyazott, hanem hivatkozásos struktúra.
+
+2. Cél: fa szerkezet létrehozása
+Az adapter ötlet kifejezetten jó: ha egyszer a normalizedName mezők alapján létrehozzuk a fa struktúrát, akkor a komponens oldalon sokkal tisztábban, reaktívan lehet navigálni szintek között.
+
+🔧 Adapter létrehozása
+Készítsünk egy adapter függvényt, ami a bejövő CategoryType[] tömbből valódi fát készít. Ehhez szükséges:
+
+egy gyors lookup map, ami normalizedName -> CategoryType referencia,
+
+a parent-child kapcsolatok kiépítése,
+
+a gyökér(ek) megtalálása.
+
+ts
+Másolás
+Szerkesztés
+type CategoryTreeNode = CategoryType & {
+    children: CategoryTreeNode[]
+}
+
+export function buildCategoryTree(categories: CategoryType[]): CategoryTreeNode[] {
+    const lookup = new Map<string, CategoryTreeNode>();
+
+    // első körben átmásoljuk az adatokat, de üres children tömbökkel
+    categories.forEach(cat => {
+        lookup.set(cat.normalizedName, {
+            ...cat,
+            children: [] // itt valós children lesz, nem normalizedName
+        });
+    });
+
+    const roots: CategoryTreeNode[] = [];
+
+    for (const cat of categories) {
+        const node = lookup.get(cat.normalizedName);
+        const parentNorm = cat.parent?.normalizedName;
+        if (parentNorm && lookup.has(parentNorm)) {
+            const parent = lookup.get(parentNorm)!;
+            parent.children.push(node!);
+        } else {
+            roots.push(node!); // ha nincs parent vagy nem található, akkor gyökér
+        }
+    }
+
+    return roots;
+}
+Ez a függvény a backend-től érkező CategoryType[] alapján létrehoz egy beágyazott fastruktúrát CategoryTreeNode[] formájában, ahol az id, name stb. mezők megmaradnak, viszont children már valóban kategória objektumokat tartalmaz.
+
+3. Komponens oldali változások – szint alapú navigáció
+A CategoryMenu komponensben ezután nem normalizedName listával kell dolgoznunk, hanem egy kiválasztott útvonalat kell tartanunk – tehát nem selectedCategory: string[], hanem:
+
+ts
+Másolás
+Szerkesztés
+selectedCategoryPath: string[] // pl.: ['electronics', 'phones', 'android']
+Ez alapján mindig tudjuk, hogy hol tartunk a fában – a selectedCategoryPath utolsó eleme mutatja a jelenlegi kategóriát, és ennek children-jeit akarjuk kilistázni. Az egy szinttel feljebb lépéshez egyszerűen levágunk egy elemet a tömb végéről.
+
+4. Komponens friss implementációs logika (részlet)
+tsx
+Másolás
+Szerkesztés
+export function CategoryMenu({ selectedCategoryPath, setSelectedCategoryPath }: {
+  selectedCategoryPath: string[],
+  setSelectedCategoryPath: (path: string[]) => void
+}) {
+    const queryClient = useQueryClient();
+    const rawCategories: CategoryType[] = queryClient.getQueryData([categoriesQuery.name]) ?? [];
+
+    const tree = buildCategoryTree(rawCategories);
+
+    // keresd meg a jelenlegi szintet, az útvonal alapján
+    const findNodeByPath = (tree: CategoryTreeNode[], path: string[]): CategoryTreeNode | null => {
+        let current: CategoryTreeNode | undefined;
+        let nodes = tree;
+        for (const name of path) {
+            current = nodes.find(n => n.normalizedName === name);
+            if (!current) return null;
+            nodes = current.children;
+        }
+        return current ?? null;
+    }
+
+    const currentNode = findNodeByPath(tree, selectedCategoryPath);
+    const children = currentNode?.children ?? tree; // ha nincs path, akkor gyökerek
+
+    const handleForward = (nextNorm: string) => {
+        setSelectedCategoryPath([...selectedCategoryPath, nextNorm]);
+    }
+
+    const handleBack = () => {
+        if (selectedCategoryPath.length > 0) {
+            setSelectedCategoryPath(selectedCategoryPath.slice(0, -1));
+        }
+    }
+
+    return (
+        <>
+            {selectedCategoryPath.length > 0 && (
+                <Chip label="⬅ Vissza" onClick={handleBack} />
+            )}
+
+            {children.sort((a, b) => a.name.localeCompare(b.name)).map((cat) => (
+                <Chip key={cat.id} label={cat.name} onClick={() => handleForward(cat.normalizedName)} />
+            ))}
+        </>
+    )
+}
+Ez már reaktív, szintalapú megjelenítést biztosít, és a kiválasztott kategória alapján léptethető oda-vissza. Közben nem szükséges flat módon gyűjtögetni a leszármazottakat, hanem mindig csak a következő szint érdekes.
+
+5. További lehetőség – adat adapter injektálása query-re
+Ez a logika tényleg jó helyre kerülhet már a query-nél, például a categoriesQuery definiálásakor:
+
+ts
+Másolás
+Szerkesztés
+categoriesQuery = {
+    name: 'categories',
+    queryFn: async () => {
+        const raw = await fetchCategories();
+        return buildCategoryTree(raw); // itt már tree-t ad vissza
+    }
+}
+Ekkor a komponens már nem CategoryType[], hanem CategoryTreeNode[]-ot kap.
+
+
+*/
