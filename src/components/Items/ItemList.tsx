@@ -27,19 +27,14 @@ export function ItemList({selectedCategory, setSelectedCategory}:Props) {
     const queryClient = useQueryClient();
     const itemBaseListCache: ItemBaseResultType[] = queryClient.getQueryData([itemBaseQuery.name])?? [];
 
-    useEffect(()=>{
-        setSelectedCategory(["item"]);
-    },[])
-
     //Filter showItem list -> category -> searchedName
     useEffect(() => {
-        console.log(itemBaseListCache, selectedCategory, searchedName);
+        //console.log("Search", itemBaseListCache, selectedCategory, searchedName)
         if (itemBaseListCache.length !== 0) {
         setShowItem(itemBaseListCache.filter((list)=> selectedCategory.includes(list.category)))
             if (searchedName !== '') {
                 const lowerSearch = searchedName.toLowerCase();
                 setShowItem(itemBaseListCache.filter((list)=> list.name.toLowerCase().includes(lowerSearch)))
-                console.log("searchedName", searchedName, "selectedCategory: ", selectedCategory, "ItemList: ",showItem)
             }
         }
     }, [itemBaseListCache, selectedCategory, searchedName]);

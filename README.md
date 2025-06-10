@@ -1,15 +1,15 @@
-# Tarkony - 2025.06.06
+# Tarkony - 2025.06.10
 
 ### Done:
-- Routing
-- ItemSingle page ini
-- Refactored: Logger system, Category fully refactoring, Commenting files + CleanCode 
+
+- Optimalized the fetching logic in Items.tsx
+- Category rework - when the page loaded, it shows the root category bulk childs (child's child in every level) items 
+  and seperately it let the choose only the under level of category, and let the user choose from the past categories and delete the middle levels.
 
 ### Next:
 
-- Category UI
-- Item Single page UI
-- Guide modal
+- Item Single page 
+- Modder compare
 
 ## Overview
 
@@ -50,6 +50,7 @@ Tarkony
 │   │   └── query.ts
 │   ├── components/
 │   │   ├── Items/
+│   │   │   ├── categoryLogic.ts
 │   │   │   ├── CategoryMenu.tsx
 │   │   │   ├── ItemDetails.tsx
 │   │   │   └── ItemList.tsx
