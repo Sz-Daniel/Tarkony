@@ -2,10 +2,10 @@ import { Accordion, AccordionSummary, Box, Pagination,Stack,styled,Typography } 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { itemBaseQuery } from "../../api/query";
+import { itemBaseQuery } from "../../api/itemsQuery";
 import { ItemDetail } from "./ItemDetail";
 import { SearchBar } from "../ui/SeachBar";
-import type { ItemBaseResultType } from "../../types/items/responseType";
+import type { ItemBaseResultType } from "../../types/Items/responseType";
 
 type Props ={
     selectedCategory: string[],

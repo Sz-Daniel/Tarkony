@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
-import type{ QueryType } from "../types/items/queryType";
+import type{ QueryType } from "../types/Items/queryType";
 import { Logger } from "../devtools/Logger";
 
 const STALE_TIME_WEEKLY = 1000 * 60 * 60 * 24 * 7;
@@ -20,10 +20,10 @@ const STALE_TIME_WEEKLY = 1000 * 60 * 60 * 24 * 7;
         queryKey: [query.name],
         queryFn: async() => {
             const raw = await fetchGQLwQuery(query.query);
-             console.log("singleItemAdapter raw",raw)
+            Logger.add("Raw: " + query.name + " useFetchIntoCache", raw)
             const useableField = raw.data[query.key] as TQuery; 
             const result = adapter ? adapter(useableField) : useableField
-            Logger.add(query.name+" useFetchIntoCache", result)
+            Logger.add("Result: " + query.name + " useFetchIntoCache", result)
             return result
         },
         staleTime: refreshTime,

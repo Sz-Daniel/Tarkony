@@ -1,15 +1,24 @@
 # Tarkony - 2025.06.10
+### Guide
+
+On the main page, all on-hand items are listed first.
+
+Displayed categories are top-level categories; by selecting them, the user is taken to the subcategories. For each selected category, all items within its subcategories are also displayed.
+
+Each item has a dropdown data field that displays additional necessary information, and when hovering over these data points, related items are also shown — for example, what the given item can be bartered for.
+
+In the detailed data section, there's an All Data button that redirects the user to the selected item's separate page, where all of its data is accessible.
 
 ### Done:
 
-- Optimalized the fetching logic in Items.tsx
-- Category rework - when the page loaded, it shows the root category bulk childs (child's child in every level) items 
-  and seperately it let the choose only the under level of category, and let the user choose from the past categories and delete the middle levels.
+- Querys + Adapter + Types for Single Page (still working on it)
 
 ### Next:
 
-- Item Single page 
-- Modder compare
+- Item Single page more data
+- IsItWorth? Bartel vs Craft Vs Trader Page
+- Modder compare Page
+- (In the end) Whole UI refactor
 
 ## Overview
 
@@ -89,21 +98,20 @@ In progress: developing a standalone asynchronous fetch function (fetchQuery), n
 
 ### `APICalls.ts`
 
-For direct usage, parameterized custom hooks from `graphQLClient.ts`, are available as Single query functions.
+For direct usage, parameterized custom hooks from `graphQLClient.ts`, are available as Single query hook functions.
 
 ### `CategoryMenu.tsx`
 
 This component handles category selection, allowing the user to browse items by category.
+It uses an intermediate parallel category processing, which collects the names of all child categories at every level under the selected category, and based on this, displays all related items across all levels of the selected category.
 
 ### `ItemList.tsx`
 
-This displays items from the selected category. Data is retrieved from QueryData, fetched by dataShow.
+This displays items from the selected category. Data is retrieved from QueryData.
 The query format is intentionally concise to avoid overloading the system, as there are 4000+ items, each with extensive associated data.
 The list includes several MUI components, most notably:
 
-Paginator
-
-Accordion: many details per item are displayed in collapsible panels, keeping the UI clean
+Paginator many details per item are displayed in collapsible panels, keeping the UI clean
 
 ItemDetails (see below)
 
@@ -119,8 +127,7 @@ Currently, it renders a box-based layout to verify data integrity, and with hove
 
 ### `MUIHover.tsx`
 
-I don't want to overload the detail view with too much information (as of 06.01).
-I'd like to keep it simple yet effective. The idea is to display short tags per data group — for example, the number of barter-related items.
+I don't want to overload the detail view with too much information. I'd like to keep it simple yet effective. The idea is to display short tags per data group — for example, the number of barter-related items.
 On hover, it will show the icons of those related items. For instance, the "Bottle of Water" item on the first page.
 This logic will be generalized across other detailed data groups. The goal is to simplify rendering while improving clarity.
 

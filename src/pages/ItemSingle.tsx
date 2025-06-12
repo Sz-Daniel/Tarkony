@@ -1,6 +1,8 @@
 import { useParams } from "react-router-dom";
+import { CircularProgress, Typography } from "@mui/material";
+import { Item } from "../components/Items/ItemDetail";
 import { useSingleItemQuery } from "../hooks/APICalls";
-
+import type { SingleItemResultType } from "../types/ItemSingle/responseType";
 
 type Params = {
     normalizeName: string 
@@ -8,20 +10,13 @@ type Params = {
 
 export function ItemSingle() {
 
-    const { normalizeName } = useParams<Params>();
-    const temp = "colt-m4a1-556x45-assault-rifle";
-    const {data}= useSingleItemQuery(temp)
-
+    const { normalizeName = "" } = useParams<Params>();
+    const { data, isSuccess, isLoading, isError, error}= useSingleItemQuery(normalizeName)
+    const item = isSuccess && data ? data as SingleItemResultType : null;
     return(<>
-        <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
-            {JSON.stringify(data, null, 2)}
-        </pre>
-    </>)
-    }
-
-
-/**
- * {item &&     
+        {isError && error.message}
+        {isLoading && <CircularProgress />}
+        {item &&     
         <div>
             <Item>
                 <Typography>id: {item.id}</Typography>
@@ -53,6 +48,7 @@ export function ItemSingle() {
             <Item>
                 <Typography>wiki: {item.wikiLink}</Typography>
             </Item>
+
             <Item>
                 <Typography>Stats 
                     height: {item.height} 
@@ -63,15 +59,23 @@ export function ItemSingle() {
                     ergonomicsModifier{item.ergonomicsModifier}
                 </Typography>
             </Item>
-            <Item>
-            {item.historicalPrices.map((hisPrice,idx)=>(
-                <Box key={idx}>
-                    <Typography>{hisPrice.timestamp} - {hisPrice.priceMin} - {hisPrice.price} - {hisPrice.offerCount}</Typography>
-                </Box>
+
+            <Item>Updated: {item.updated}</Item>
+
+           <Item>
+            {item.sellTo.map((sell,idx)=>(
+                <Typography key={idx}> {sell.vendor}: {sell.price} {sell.currency} {sell.currency !=="RUB" ? sell.priceRub + " RUB" : ""} </Typography>
             ))}
             </Item>
 
-
         </div>
         }
- */
+
+    </>)
+    
+    }
+
+
+
+ 
+     

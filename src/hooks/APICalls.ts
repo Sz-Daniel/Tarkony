@@ -1,8 +1,11 @@
 import { useFetchIntoCache } from "../api/graphQLClient";
-import { categoriesQuery, itemBaseAdapter, itemBaseQuery, itemDetailsAdapter, itemDetailsQuery,  singleItemQuery } from "../api/query";
-import type { SingleItemQueryType } from "../types/item/queryType";
-import type { CategoryType, ItemBaseQueryType, ItemDetailQueryType } from "../types/items/queryType";
-import type { ItemBaseResultType, ItemDetailResultType } from "../types/items/responseType";
+import { singleItemAdapter, singleItemQuery } from "../api/itemSingleQuery";
+import { categoriesQuery, itemBaseAdapter, itemBaseQuery, itemDetailsAdapter, itemDetailsQuery } from "../api/itemsQuery";
+import type { CategoryType, ItemBaseQueryType, ItemDetailQueryType } from "../types/Items/queryType";
+import type { ItemBaseResultType, ItemDetailResultType } from "../types/Items/responseType";
+import type { SingleItemQueryType } from "../types/ItemSingle/queryType";
+import type { SingleItemResultType } from "../types/ItemSingle/responseType";
+
 
 //param for weekly-daily etc 
 const STALE_TIME_WEEKLY = 1000 * 60 * 60 * 24 * 7;
@@ -24,5 +27,5 @@ export function useItemBaseListQuery(){
 }
 
 export function useSingleItemQuery(normalizedNameProp:string){
-     return useFetchIntoCache<SingleItemQueryType>(singleItemQuery(normalizedNameProp));
+     return useFetchIntoCache<SingleItemQueryType,SingleItemResultType>(singleItemQuery(normalizedNameProp),singleItemAdapter);
 }

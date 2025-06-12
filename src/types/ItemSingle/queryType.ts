@@ -14,7 +14,7 @@ export type SingleItemQueryType = {
   name:string,
   shortName:string,
 
-   lastLowPrice:number,
+  lastLowPrice:number,
   low24hPrice:number,
   avg24hPrice:number,
   high24hPrice:number,
@@ -30,6 +30,7 @@ export type SingleItemQueryType = {
   backgroundColor:string,
   gridImageLink:string,
 
+  
   description:string,
   wikiLink:string,
 
@@ -39,21 +40,31 @@ export type SingleItemQueryType = {
   loudness:number,
   accuracyModifier:number,
   ergonomicsModifier:number,
- 
 
-  historicalPrices: HistoricalPrices[],
+  updated:string,
 
-  sellFor:traderForType[],
-  buyFor:traderForType[],
-  bartersFor: requiredItemsType[],
-  bartersUsing: rewardItemsType[],
-  craftsFor:requiredItemsType[],
-  craftsUsing: rewardItemsType[],
-  receivedFromTasks: receivedFromTasksType[],
+  sellFor: SellFor[],
 
+  buyFor: BuyFor[],
+
+  bartersUsing: BartersUsing[],
+
+  
+  
+  
+}
+type BartersUsing = {
+  buyLimit:number,
+  trader: name
+  taskUnlock:TaskUnlock 
+  requiredItems: CountedItem[]
+  rewardItems: CountedItem[]
+  requirements: Requirements[],
 }
 
-//Fragments Types
+/**  
+  historicalPrices: HistoricalPrices[],
+  //Fragments Types
 type HistoricalPrices = {
   offerCount:number,
   price: number,
@@ -62,11 +73,47 @@ type HistoricalPrices = {
 }
 
 
+  sellFor:traderForType[],
+  buyFor:traderForType[],
 
-export type traderForType={
+  craftsFor:requiredItemsType[],
+  craftsUsing: rewardItemsType[],
+  receivedFromTasks: receivedFromTasksType[],
+ */
+
+
+type BuyFor={
   priceRUB:number,
-  vendor: name
-};
+  price: number,
+  currency: string,
+
+  vendor: Vendor,
+
+  requirements: Requirements[],
+}
+type Requirements = {
+  type:string,
+  value:number
+}
+
+type Vendor ={
+  minTraderLevel: number,
+  buyLimit: number,
+  name: string,
+  taskUnlock: TaskUnlock,
+}
+
+type TaskUnlock= {
+  name:string,
+  minPlayerLevel:number,
+}
+
+type SellFor={
+  priceRUB:number,
+  vendor: name,
+  price: number,
+  currency: string,
+}
 
 type requiredItemsType = {
   requiredItems: CountedItem[];

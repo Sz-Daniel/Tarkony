@@ -1,8 +1,8 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { categoriesQuery } from "../../api/query";
+import { categoriesQuery } from "../../api/itemsQuery";
 import { useEffect, useState } from "react";
 import { Chip } from "@mui/material";
-import type { CategoryType } from "../../types/items/queryType";
+import type { CategoryType } from "../../types/Items/queryType";
 import { selectedBulkCategoryLogic } from "./categoryLogic";
 
 type Props ={

@@ -3,7 +3,7 @@ import {  useEffect } from "react";
 import { MUIHover } from "../ui/MUIHover";
 import { styled } from "@mui/system";
 import type { ItemDetailPropsType } from "../../types/type";
-import type { ItemDetailResultType } from "../../types/items/responseType";
+import type { ItemDetailResultType } from "../../types/Items/responseType";
 import { useItemDetailQuery } from "../../hooks/APICalls";
 import { Navigate, Link as RouterLink, useNavigate } from "react-router-dom";
 
