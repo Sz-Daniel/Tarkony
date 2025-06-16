@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import type { ResponseCountedItem } from "../../types/ItemSingle/responseType";
+import type { ResponseCountedItem } from "../../api/types/ItemSingle/responseType";
 
 /**
  * Helps to display the items and makes the code more readable 

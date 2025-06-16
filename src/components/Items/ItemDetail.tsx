@@ -1,8 +1,8 @@
 import { AccordionDetails, Box, Button, CircularProgress, Link, List, ListItem, ListItemText, Tab, Tabs, Typography } from "@mui/material";
 import { Grid, styled } from "@mui/system";
-import type { ItemDetailPropsType } from "../../types/type";
-import type { ItemDetailResultType } from "../../types/Items/responseType";
-import { useItemDetailQuery } from "../../hooks/APICalls";
+import type { ItemDetailPropsType } from "../../api/types/type";
+import type { ItemDetailResultType } from "../../api/types/Items/responseType";
+import { useItemDetailQuery } from "../../api/hooks/APICalls";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { a11yProps, CustomTabPanel } from "../ui/Tabs";
 import { Combination } from "../ui/Combination";

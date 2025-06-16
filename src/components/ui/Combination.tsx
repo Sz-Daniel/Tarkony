@@ -1,5 +1,5 @@
 import { Box, List, Paper, Typography } from "@mui/material";
-import type { Barter, Craft, ResponseCountedItem } from "../../types/ItemSingle/responseType";
+import type { Barter, Craft, ResponseCountedItem } from "../../api/types/ItemSingle/responseType";
 import { CountedItem } from "./CountedItem";
 
 /**

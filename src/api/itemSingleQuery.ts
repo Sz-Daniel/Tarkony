@@ -1,4 +1,4 @@
-import type { QueryType } from "../types/Items/queryType"
+import type { QueryType } from "./types/Items/queryType"
 
 export const singleItemQuery  = (normalizedName: string = ""): QueryType => {
     return {

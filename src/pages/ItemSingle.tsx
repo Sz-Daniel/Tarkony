@@ -1,8 +1,8 @@
 import { useParams } from "react-router-dom";
 import {  Box,  Grid,  Typography,  Chip,  Paper,  CircularProgress,  Table,  TableBody,
   TableRow,  TableCell,  List,  ListItem,  ListItemText,} from '@mui/material';
-import { useSingleItemQuery } from "../hooks/APICalls";
-import type { SingleItemResultType } from "../types/ItemSingle/responseType";
+import { useSingleItemQuery } from "../api/hooks/APICalls";
+import type { SingleItemResultType } from "../api/types/ItemSingle/responseType";
 import { Combination } from "../components/ui/Combination";
 
 type Params = {

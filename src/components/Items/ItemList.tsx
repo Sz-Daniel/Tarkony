@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { itemBaseQuery } from "../../api/itemsQuery";
 import { ItemDetail } from "./ItemDetail";
 import { SearchBar } from "../ui/SeachBar";
-import type { ItemBaseResultType } from "../../types/Items/responseType";
+import type { ItemBaseResultType } from "../../api/types/Items/responseType";
 
 type Props ={
     selectedCategory: string[],

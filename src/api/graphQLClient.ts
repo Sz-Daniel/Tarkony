@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
-import type{ QueryType } from "../types/Items/queryType";
+import type{ QueryType } from "./types/Items/queryType";
 import { Logger } from "../devtools/Logger";
 
 const STALE_TIME_WEEKLY = 1000 * 60 * 60 * 24 * 7;

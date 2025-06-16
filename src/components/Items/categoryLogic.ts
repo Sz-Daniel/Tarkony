@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import type { CategoryType } from "../../types/Items/queryType"
+import type { CategoryType } from "../../api/types/Items/queryType"
 
 type Props ={
     selected: string,
