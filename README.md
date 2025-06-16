@@ -1,4 +1,4 @@
-# Tarkony - 2025.06.10
+# Tarkony - 2025.06.16
 ### Guide
 
 On the main page, all on-hand items are listed first.
@@ -11,11 +11,14 @@ In the detailed data section, there's an All Data button that redirects the user
 
 ### Done:
 
-- Querys + Adapter + Types for Single Page (still working on it)
+- Querys + Adapter + Types for Single Page 
+- Item Single minimal UI with dinamic Components 
+- ItemDetails refactored: Query, Combination 
 
 ### Next:
 
-- Item Single page more data
+- Combination with prices
+- Item Single page Quests
 - IsItWorth? Bartel vs Craft Vs Trader Page
 - Modder compare Page
 - (In the end) Whole UI refactor
@@ -53,10 +56,14 @@ Data is fetched from a GraphQL API:
 Tarkony
 ├── public/
 ├── src/
+│   ├── adapters/
+│   │   ├── itemsAdapter.ts 
+│   │   └── ItemSingleAdapter.ts
 │   ├── api/
 │   │   ├── old/ 
 │   │   ├── graphQLClient.ts
-│   │   └── query.ts
+│   │   ├── itemSingleQuery.ts
+│   │   └── itemsQuery.ts
 │   ├── components/
 │   │   ├── Items/
 │   │   │   ├── categoryLogic.ts
@@ -67,8 +74,11 @@ Tarkony
 │   │   │   ├── Footer.tsx
 │   │   │   └── LoggerComponents.tsx
 │   │   └── ui/
-│   │   │   ├── MUIHover.tsx
-│   │   │   └── SearchBar.tsx
+│   │       ├── Combination.tsx
+│   │       ├── CountedItem.tsx
+│   │       ├── MUIHover.tsx
+│   │       ├── Tabs.tsx
+│   │       └── SearchBar.tsx
 │   ├── hooks/
 │   │   └── APICalls.ts
 │   ├── pages/
@@ -76,8 +86,12 @@ Tarkony
 │   │   ├── MainLayout.tsx 
 │   │   └── ItemSingle.tsx
 │   ├── types/
-│   │   ├── item/ 
+│   │   ├── ItemSingle/ 
+│   │   │   ├── queryTyoe.ts
+│   │   │   └── responseType.ts
 │   │   └── items/
+│   │       ├── queryTyoe.ts
+│   │       └── responseType.ts
 │   ├── devtools/
 │   │   ├── utility.ts
 │   │   └── Logger.tsx
@@ -91,7 +105,7 @@ Tarkony
   '/' -> Items.tsx
   '/items/normalizedName' -> ItemSingle.tsx
 
-### `graphQLClient.ts` + `query.ts`
+### `graphQLClient.ts` + `itemSingleQuery.ts` + `itemsQuery.ts`
 
 This module manages GraphQL request logic using Axios, integrating with useQuery to fetch pre-defined queries via custom hooks.
 In progress: developing a standalone asynchronous fetch function (fetchQuery), not tied to React hooks.
@@ -135,6 +149,14 @@ This logic will be generalized across other detailed data groups. The goal is to
 
 As part of the search functionality, a SearchBar component was created.
 It receives a delayed setter function from ItemList, which updates a keyword used for filtering the item list.
+
+### `CountedItem.tsx`
+
+Display the input / output items under each other with icon and name
+
+### `Combination.tsx`
+
+Display the Whole combination Input -> With -> Output. Makes the code and array clean
 
 ### `queryType.ts`
 

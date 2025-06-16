@@ -1,11 +1,12 @@
-import { AccordionDetails, Box, Button, CircularProgress, Link, Typography } from "@mui/material"
-import {  useEffect } from "react";
-import { MUIHover } from "../ui/MUIHover";
-import { styled } from "@mui/system";
+import { AccordionDetails, Box, Button, CircularProgress, Link, List, ListItem, ListItemText, Tab, Tabs, Typography } from "@mui/material";
+import { Grid, styled } from "@mui/system";
 import type { ItemDetailPropsType } from "../../types/type";
 import type { ItemDetailResultType } from "../../types/Items/responseType";
 import { useItemDetailQuery } from "../../hooks/APICalls";
-import { Navigate, Link as RouterLink, useNavigate } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { a11yProps, CustomTabPanel } from "../ui/Tabs";
+import { Combination } from "../ui/Combination";
+import { useState } from "react";
 
 export const Item = styled(Box)(({ theme }) => ({
     padding: theme.spacing(2),
@@ -17,168 +18,129 @@ export function ItemDetail({itemId}:ItemDetailPropsType) {
 
     const navigate = useNavigate();
 
+    const [value, setValue] = useState(0);
+
+    const tabsHandleChange = (event: React.SyntheticEvent, newValue: number) => {
+        setValue(newValue);
+    };
+
     const { data, isSuccess, isLoading } = useItemDetailQuery(itemId);
     const item = isSuccess && data && data.length > 0 ? data[0] as ItemDetailResultType : null;
+
+    let craft
+    let barter
+    if (item !== null) {
+      const craftInputSort = item.craftInput.filter(
+        (input) => !item.craftOutput.some((output) => output.id === input.id)
+      );
+      craft = [...craftInputSort, ...item.craftOutput]
+    }
+        if (item !== null) {
+      const barterInputSort = item.barterInput.filter(
+        (input) => !item.barterOutput.some((output) => output.id === input.id)
+      );
+      barter = [...barterInputSort, ...item.barterOutput]
+    }
    
     return(
     <>
         {isLoading && <CircularProgress />}
         {item && 
 
-        <AccordionDetails >
-            <Box sx={{ display: 'flex', gap: 1}}>
-                <Box sx={{ flex: 1, alignSelf: 'flex-start'}}>
-                    <Typography> Trader: </Typography>
-                </Box>                
-                <Box sx={{ flex: 1}}>
-                    <MUIHover title={`Can be sold: ${item.sellOffer.length}`}>
-                        <Box sx={{ display: 'flex', gap: 1 }}>
-                            {item.sellOffer.map((trader, idx) => (
-                            <Item key={idx} sx={{ flex: 1 }}>
-                                <Typography>{trader.vendor}</Typography>
-                                <Typography>{trader.price}</Typography>
-                            </Item>
-                            ))}
-                        </Box>
-                    </MUIHover>
-                </Box>
+        <AccordionDetails>
 
-                <Box sx={{ flex: 1}}>
-                    <MUIHover title={`Offer: ${item.buyOffer.length}`}>
-                        <Box sx={{ display: 'flex', gap: 1 }}>
-                            {item.buyOffer.map((trader, idx) => (
-                            <Item key={idx} sx={{ flex: 1 }}>
-                                <Typography>{trader.vendor}</Typography>
-                                <Typography>{trader.price}</Typography>
-                            </Item>
-                            ))}
-                        </Box>
-                    </MUIHover>
+            <Box>
+                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                    <Tabs value={value} onChange={tabsHandleChange} aria-label="basic tabs example">
+                    <Tab label="Trader" {...a11yProps(0)} />
+                    <Tab label="Craft" {...a11yProps(1)} />
+                    <Tab label="Barter" {...a11yProps(2)} />
+                    </Tabs>
                 </Box>
-            </Box>
+                <CustomTabPanel value={value} index={0}>
+                    <Grid size={12}>
+                    
+                        <Box display={"flex"} flexDirection={"row"} alignItems={"baseline"}>
 
-            <Box sx={{ display: 'flex', gap: 1 }}>
-                <Box sx={{ flex: 1}}>
-                    <Typography> Barter: </Typography>
-                </Box>   
-                <Box sx={{ flex: 1}}>
-                    <MUIHover title={`Needs for the offer: ${item.bartersNeeds.length}`}>
-                        <Box sx={{ display: 'flex', gap: 1 }}>
-                            {item.bartersNeeds.map((barter, idx) => (
-                            <Item key={idx} sx={{ flex: 1 }}>
-                                <img
-                                src={barter.icon}
-                                alt={barter.name}
-                                loading="lazy"
-                                style={{ maxWidth: '100%' }}
-                                />
-                            </Item>
-                            ))}
-                        </Box>
-                    </MUIHover>
-                </Box>
+                            <Box sx={{flex: 1}}>
+                                <Typography variant="h6" gutterBottom>
+                                Sell To
+                                </Typography>
+                                <List dense>
+                                {item.sellTo.map((entry, i) => (
+                                    <ListItem key={i}>
+                                    <ListItemText
+                                    primary={`${entry.traderName}: ${entry.price} ${entry.priceCurrency}`}
+                                    secondary={entry.traderName === "Flea Market" ? `FIR: ${entry.fir ? "Yes" : "No"}`: ""}
+                                    />
+                                    </ListItem>
+                                ))}
+                                </List>
+                            </Box>
 
-                <Box sx={{ flex: 1}}>
-                    <MUIHover title={`Offer gives: ${item.bartersGive.length}`}>
-                        <Box sx={{ display: 'flex', gap: 1 }}>
-                            {item.bartersGive.map((barter, idx) => (
-                            <Item key={idx} sx={{ flex: 1 }}>
-                                <img
-                                src={barter.icon}
-                                alt={barter.name}
-                                loading="lazy"
-                                style={{ maxWidth: '100%' }}
-                                />
-                            </Item>
-                            ))}
-                        </Box>
-                    </MUIHover>
-                </Box>
+                            <Box sx={{ flex: 1}}>
+                                <Typography variant="h6" gutterBottom>
+                                Buy From
+                                </Typography>
+                                <List dense>
+                                {item.buyFrom.map((entry, i) => (
+                                    <ListItem key={i}>
+                                    <ListItemText
+                                        primary={`
+                                        ${entry.playertoTraderRequirements.traderName}: ${entry.price} ${entry.priceCurrency}
+                                        `}
+                                        secondary={
+                                        (entry.limit || entry.playertoTraderRequirements?.traderLevel) 
+                                        ? `${entry.limit ? `Limit: ${entry.limit}` : ''}
+                                        ${entry.limit && entry.playertoTraderRequirements?.traderLevel ? ', ' : ''}
+                                        ${entry.playertoTraderRequirements?.traderLevel ? `Trader lvl: ${entry.playertoTraderRequirements.traderLevel}` : ''}
+                                        `: undefined
+                                        }
+                                    />
+                                    </ListItem>
+                                ))}
+                                </List> 
+                            </Box>
 
-            </Box>
-            <Box sx={{ display: 'flex', gap: 1 }}>
+                        </Box>
+                   
+                    </Grid>
+                </CustomTabPanel>
+                <CustomTabPanel value={value} index={1}>
+                    <Box sx={{maxHeight:400, overflowY: 'auto' }}>
+                        <Typography variant="h6" gutterBottom>
+                        Crafting
+                        </Typography>
 
-                <Box sx={{ flex: 1}}>
-                    <Typography> Crafting:  </Typography>
-                </Box>   
-                
-                <Box sx={{ flex: 1}}>
-                    <MUIHover title={`Needs for the craft: ${item.craftsNeeds.length}`}>
-                        <Box sx={{ display: 'flex', gap: 1 }}>
-                            {item.craftsNeeds.map((craft, idx) => (
-                            <Item key={idx} sx={{ flex: 1 }}>
-                                <img
-                                src={craft.icon}
-                                alt={craft.name}
-                                loading="lazy"
-                                style={{ maxWidth: '100%' }}
-                                />
-                            </Item>
-                            ))}
-                        </Box>
-                    </MUIHover>
-                </Box>
-                <Box sx={{ flex: 1}}>
-                    <MUIHover title={`Crafting gives: ${item.craftsGive.length}`}>
-                        <Box sx={{ display: 'flex', gap: 1 }}>
-                            {item.craftsGive.map((craft, idx) => (
-                            <Item key={idx} sx={{ flex: 1 }}>
-                                <img
-                                src={craft.icon}
-                                alt={craft.name}
-                                loading="lazy"
-                                style={{ maxWidth: '100%' }}
-                                />
-                            </Item>
-                            ))}
-                        </Box>
-                    </MUIHover>
-                </Box>
-            </Box>
-            <Box sx={{ display: 'flex', gap: 1 }}>
-                <Box sx={{ flex: 1}}>
-                    <Typography> Task: </Typography>
-                </Box>   
-                <Box sx={{ flex: 1}}>
-                    <MUIHover title={`Task need: ${item.tasksRewards.length}`}>
-                        <Box sx={{ display: 'flex', gap: 1 }}>
-                            {item.tasksRewards.map((task, idx) => (
-                            <Item key={idx} sx={{ flex: 1 }}>
-                             <Typography>{task.name}</Typography>
-                      
-                            </Item>
-                            ))}
-                        </Box>
-                    </MUIHover>
-                </Box>
-                <Box sx={{ flex: 1}}>
-                    <MUIHover title={`Task gives: ${item.craftsGive.length}`}>
-                        <Box sx={{ display: 'flex', gap: 1 }}>
-                            {item.craftsGive.map((craft, idx) => (
-                            <Item key={idx} sx={{ flex: 1 }}>
-                                <img
-                                src={craft.icon}
-                                alt={craft.name}
-                                loading="lazy"
-                                style={{ maxWidth: '100%' }}
-                                />
-                            </Item>
-                            ))}
-                        </Box>
-                    </MUIHover>
-                </Box>
+                        {craft && craft.map((craft, i) => (
+                            <Combination key={i} props={{ ...craft, kind: "Craft" }}/>
+                        ))}
+                    </Box>      
+                </CustomTabPanel>
+                <CustomTabPanel value={value} index={2}>
+                     <Box sx={{maxHeight:500, overflowY: 'auto' }}>
+                        <Typography variant="h6" gutterBottom>
+                        Barter
+                        </Typography>
+
+
+                        {barter && barter.map((barter, i) => (
+                            <Combination key={i} props={{ ...barter, kind: "Barter" }}/>
+                        ))}
+                    </Box>
+                </CustomTabPanel>
             </Box>
             <Box sx={{ display: 'flex', gap: 1}}>
-                
+
                 <Box sx={{ flex: 2, alignSelf: 'flex-start'}}>
                     <Link href={item.wiki}>Wiki</Link>
                 </Box>
 
-                    <Button sx={{ flex: 2, alignSelf: 'flex-start'}}
-                    onClick={()=>{navigate(`/items/${item.normalizedName}`)}}
+                <Button sx={{ flex: 2, alignSelf: 'flex-start'}}
+                    onClick={()=>{navigate(`/item/${item.normalizedName}`)}}
                     >
-                        <Typography>All data</Typography>
-                    </Button>   
+                    <Typography>All data</Typography>
+                </Button>   
 
             </Box>
             </AccordionDetails>

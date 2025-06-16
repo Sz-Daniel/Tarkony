@@ -3,11 +3,11 @@ import type { CategoryType } from "../../types/Items/queryType"
 
 type Props ={
     selected: string,
+    setSelectedCategory: React.Dispatch<React.SetStateAction<string[]>>,
     categoriesCache: CategoryType[],
-    setSelectedCategory: React.Dispatch<React.SetStateAction<string[]>>
 }
 
-export const selectedBulkCategoryLogic = ({selected, categoriesCache, setSelectedCategory} :Props) => {
+export const selectedBulkCategoryLogic = ({selected, setSelectedCategory, categoriesCache} :Props) => {
 
     //collected the selected category normalizedname and childs normalized names
     const [collectorCategNormalizedNames,setCollectorCategNormalizedNames] = useState<string[]>([])

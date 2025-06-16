@@ -2,6 +2,7 @@ export type SingleItemResultType = {
     id:string,
     name:string,
     shortName:string,
+    categories: string[],
 
     lastLowPrice:number,
     low24hPrice:number,
@@ -35,51 +36,97 @@ export type SingleItemResultType = {
 
     buyFrom: BuyFrom[],
 
-    barterTo: BarterFrom[] 
-    
+    barterInput: Barter[],
+
+    barterOutput: Barter[],
+
+    craftInput: Craft[],
+
+    craftOutput: Craft[],
+
+
+}
+//craftUsing
+export type Craft =  CraftRequirement &{
+    inputItems: ResponseCountedItem[],
+    outputItems: ResponseCountedItem[],
 }
 
-type BarterFrom = {
-    requirements: Requirements[]
+type CraftRequirement = {
+    id: string,
+    duration: number,
+    stationRequirement: StationRequirement,
+    questRequirement: QuestRequirement,
 }
 
-type Requirements = {
+type StationRequirement =  {
+    level:number,
+    stationName: string,
+    stationIcon: string,
+}
+
+
+export type Barter = PurchaseRequirement &{
+    inputItems: ResponseCountedItem[],
+    outputItems: ResponseCountedItem[],
+}
+
+export type ResponseCountedItem ={
+    count: number;
+    id: string,
+    img: string;
+    name: string;
+}
+
+type SellTo = PriceInfo & {
+    fir: Boolean,
     traderName: string,
-    traderLevel: number,
 }
 
-type BarterTo ={
+type BuyFrom = 
+    PriceInfo &
+    PurchaseRequirement
 
-}
-
-type BuyFrom = {
-    priceRUB:number,
+type PriceInfo = {
+    priceRub: number,
     price: number,
-    currency: string,
-
-    minTraderLevel: number,
-    buyLimit: number,
-    vendorname: string,
-    questName: string,
-    minPlayerLevel:number,
-
-    requirement: Requirement[]
+    priceCurrency: string,
 }
 
-type Requirement = {
-    requirementType: string,
-    requirementValue: number,
+type PurchaseRequirement = {
+    id: string,
+    limit: number,
+    playertoTraderRequirements: PlayertoTraderRequirements,
+    questRequirement: QuestRequirement,
 }
-type HistoricalPrices = {
+type QuestRequirement ={
+    level: number,
+    name: string,
+}
+
+type PlayertoTraderRequirements = {
+    traderName: string,
+    traderIcon: string,
+    traderLevel:number,
+    playerLevel:number,
+    reputation:number,
+    commerce:number,
+}
+
+
+
+
+
+
+
+
+
+/** NOT USING
+ * type HistoricalPrices = {
     offerCount:number,
     price: number,
     priceMin: number,
     timestamp: string,
 }
-
-type SellTo = {
-    priceRub: number,
-    price: number,
-    vendor: string,
-    currency: string,
-} 
+ * 
+ */

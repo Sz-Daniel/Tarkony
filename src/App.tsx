@@ -10,7 +10,7 @@ function App() {
         <Routes>
           <Route element={<MainLayout/>}>
             <Route path="/" element={<Items/>}/>
-            <Route path="/items/:normalizeName" element={<ItemSingle />} />
+            <Route path="/item/:normalizeName" element={<ItemSingle />} />
           </Route>
         </Routes>
     </>

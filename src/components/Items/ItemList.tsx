@@ -13,7 +13,8 @@ type Props ={
 }
 
 export function ItemList({selectedCategory, setSelectedCategory}:Props) {
-    
+
+    const [expanded, setExpanded] = useState<string | false>(false);
     //paginator
     const [page, setPage] = useState(1);
     //full item list which will filtered in useeffect -> selectedCategory -> searchedName
@@ -41,7 +42,8 @@ export function ItemList({selectedCategory, setSelectedCategory}:Props) {
 
     //Accordion
     const accordionHandleChange =
-    (panel: string) => async (event: React.SyntheticEvent) => {
+    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+        setExpanded(isExpanded ? panel : false);
         setSelectedItem(panel);
     };
 
@@ -121,8 +123,10 @@ export function ItemList({selectedCategory, setSelectedCategory}:Props) {
                 </Box>
 
             </AccordionSummary>
-            {/* AccordionDetails in ItemDetails*/}
-                {selectedItem === item.id && <ItemDetail itemId={item.id} />}
+            
+                    {/* AccordionDetails in ItemDetails*/}
+                    {selectedItem === item.id && <ItemDetail itemId={item.id} />}
+             
             </Accordion>
         
         ))}

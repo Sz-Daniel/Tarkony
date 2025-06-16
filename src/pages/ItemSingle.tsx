@@ -1,8 +1,9 @@
 import { useParams } from "react-router-dom";
-import { CircularProgress, Typography } from "@mui/material";
-import { Item } from "../components/Items/ItemDetail";
+import {  Box,  Grid,  Typography,  Chip,  Paper,  CircularProgress,  Table,  TableBody,
+  TableRow,  TableCell,  List,  ListItem,  ListItemText,} from '@mui/material';
 import { useSingleItemQuery } from "../hooks/APICalls";
 import type { SingleItemResultType } from "../types/ItemSingle/responseType";
+import { Combination } from "../components/ui/Combination";
 
 type Params = {
     normalizeName: string 
@@ -13,69 +14,234 @@ export function ItemSingle() {
     const { normalizeName = "" } = useParams<Params>();
     const { data, isSuccess, isLoading, isError, error}= useSingleItemQuery(normalizeName)
     const item = isSuccess && data ? data as SingleItemResultType : null;
+
+    //Sorting out the duplicated and merge the input & output types
+    let craft
+    let barter
+    if (item !== null) {
+      const craftInputSort = item.craftInput.filter(
+        (input) => !item.craftOutput.some((output) => output.id === input.id)
+      );
+      craft = [...craftInputSort, ...item.craftOutput]
+    }
+        if (item !== null) {
+      const barterInputSort = item.barterInput.filter(
+        (input) => !item.barterOutput.some((output) => output.id === input.id)
+      );
+      barter = [...barterInputSort, ...item.barterOutput]
+    }
+
     return(<>
         {isError && error.message}
         {isLoading && <CircularProgress />}
         {item &&     
-        <div>
-            <Item>
-                <Typography>id: {item.id}</Typography>
-            </Item>
-            <Item>
-                <Typography>{item.name} short :{item?.shortName}</Typography>
-            </Item>
-            <Item>
-                <Typography>Last Lowest Price: {item.lastLowPrice}</Typography>
-            </Item>
-            <Item>
-                <Typography>24h: Low {item.low24hPrice} - avg: {item.avg24hPrice} - highest: {item.high24hPrice}</Typography>
-            </Item>
-            <Item>
-                <Typography>48h change: {item.changeLast48h} <sub>{item.changeLast48hPercent}</sub></Typography>
-            </Item>
-            <Item>
-                <Typography>Grid: {item.width}x{item.weight} Grid? {item.hasGrid}</Typography>
-            </Item>
-            <Item>
-                <Typography>img big: {item.inspectImageLink}</Typography>
-            </Item>
-            <Item>
-                <Typography>img icon: {item.gridImageLink} color:  {item.backgroundColor}</Typography>
-            </Item>
-            <Item>
-                <Typography>desc: {item.description}</Typography>
-            </Item>
-            <Item>
-                <Typography>wiki: {item.wikiLink}</Typography>
-            </Item>
+        <Box sx={{ p: 4 }}>
 
-            <Item>
-                <Typography>Stats 
-                    height: {item.height} 
-                    velocity:{item.velocity}  
-                    recoilModifier{item.recoilModifier}    
-                    loudness{item.loudness}    
-                    accuracyModifier{item.accuracyModifier}
-                    ergonomicsModifier{item.ergonomicsModifier}
+          <Grid container spacing={3}>
+
+            {/* First section - Pic, Meta Info*/}
+            <Grid size={12}>
+
+              <Paper elevation={3} sx={{ p: 2 }}>
+                <Box display="flex" flexDirection="row" alignItems="center">
+
+                  <Box component="img"   src={item.inspectImageLink}
+                  alt={`${item.name}`}
+                  sx={{ flex: 1, mr: 2 }}
+                  />
+
+                  <Box sx={{ flex: 2, mb: 2 }}>
+                    <Typography variant="h6">{item.name}</Typography>
+                    <Typography variant="body2" color="text.secondary">{item.shortName}</Typography>
+                    <Chip label={`Weight: ${item.weight}kg`} sx={{ mt: 1 }} />
+                    <Chip label={`Size: ${item.width}x${item.height}`} sx={{ mt: 1 }} />
+                    <Chip label={`Grid: ${item.hasGrid ? 'Yes' : 'No'}`} sx={{ mt: 1 }} />
+                    <Box sx={{m:2}}>
+                      {item.categories.map(cat => (
+                      <Chip label={cat} sx={{ mt: 1 }} />
+                      ))}
+                    </Box>
+                  </Box>
+
+               </Box>
+              </Paper>
+            </Grid>
+
+            {/* Flea info*/}
+            <Grid size={12}>
+              <Paper elevation={3} sx={{ p:2 }}>
+                <Typography variant="h6" gutterBottom>
+                Market Stats
                 </Typography>
-            </Item>
+                <Grid container spacing={2}>
+                  <Grid size={6}>
+                    <Typography variant="body2">Last Price:</Typography>
+                    <Typography>{item.lastLowPrice}₽</Typography>
+                  </Grid>
+                  <Grid size={6}>
+                    <Typography variant="body2">24h Avg:</Typography>
+                    <Typography>{item.avg24hPrice}₽</Typography>
+                  </Grid>
+                  <Grid size={6}>
+                    <Typography variant="body2">High (24h):</Typography>
+                    <Typography>{item.high24hPrice}₽</Typography>
+                  </Grid>
+                  <Grid size={6}>
+                    <Typography variant="body2">Low (24h):</Typography>
+                    <Typography>{item.low24hPrice}₽</Typography>
+                  </Grid>
+                  <Grid size={6}>
+                    <Typography variant="body2">Change (48h):</Typography>
+                    <Typography>
+                    {item.changeLast48h} ({item.changeLast48hPercent}%)
+                    </Typography>
+                  </Grid>
+                  <Grid size={6}>
+                    <Typography variant="body2">Offers:</Typography>
+                    <Typography>{item.lastOfferCount}</Typography>
+                  </Grid>
+                </Grid>
+              </Paper>
+            </Grid>
 
-            <Item>Updated: {item.updated}</Item>
+            {/* Item stats */}
+            <Grid size={12}>
+              <Paper elevation={3} sx={{ p:2 }} >
+                <Typography variant="h6" gutterBottom>Item Stats</Typography>
+                <Table size="small">
+                <TableBody>
+                  <TableRow>
+                    <TableCell>Velocity</TableCell>
+                    <TableCell>{item.velocity}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>Recoil Modifier</TableCell>
+                    <TableCell>{item.recoilModifier}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>Loudness</TableCell>
+                    <TableCell>{item.loudness}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>Accuracy Modifier</TableCell>
+                    <TableCell>{item.accuracyModifier}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>Ergonomics Modifier</TableCell>
+                    <TableCell>{item.ergonomicsModifier}</TableCell>
+                  </TableRow>
+                </TableBody>
+                </Table>
+              </Paper>
+            </Grid>
 
-           <Item>
-            {item.sellTo.map((sell,idx)=>(
-                <Typography key={idx}> {sell.vendor}: {sell.price} {sell.currency} {sell.currency !=="RUB" ? sell.priceRub + " RUB" : ""} </Typography>
-            ))}
-            </Item>
+            {/* Description */}
+            <Grid size={12}>
+              <Paper elevation={3} sx={{ p:2 }}>
+                <Typography> {item.id}</Typography>
+                <Typography variant="h6" gutterBottom>
+                Description
+                </Typography>
+                <Typography variant="body2">{item.description}</Typography>
+                <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
+                <a href={item.wikiLink} target="_blank" rel="noopener noreferrer">
+                View on Wiki
+                </a>
+                </Typography>
+                <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 2 }}>
+                Last updated: {item.updated}
+                </Typography>
+              </Paper>
+            </Grid>
 
-        </div>
+            {/* Trader info */}
+            <Grid size={12}>
+              <Paper elevation={3} sx={{ p:2 }}>
+                <Box display={"flex"} flexDirection={"row"} alignItems={"baseline"}>
+
+                  <Box sx={{flex: 1}}>
+                    <Typography variant="h6" gutterBottom>
+                    Sell To
+                    </Typography>
+                    <List dense>
+                      {item.sellTo.map((entry, i) => (
+                      <ListItem key={i}>
+                      <ListItemText
+                      primary={`${entry.traderName}: ${entry.price} ${entry.priceCurrency}`}
+                      secondary={entry.traderName === "Flea Market" ? `FIR: ${entry.fir ? "Yes" : "No"}`: ""}
+                      />
+                      </ListItem>
+                      ))}
+                    </List>
+                  </Box>
+
+                  <Box sx={{ flex: 1}}>
+                    <Typography variant="h6" gutterBottom>
+                    Buy From
+                    </Typography>
+                    <List dense>
+                      {item.buyFrom.map((entry, i) => (
+                      <ListItem key={i}>
+                      <ListItemText
+                        primary={`
+                          ${entry.playertoTraderRequirements.traderName}: ${entry.price} ${entry.priceCurrency}
+                        `}
+                        secondary={
+                        (entry.limit || entry.playertoTraderRequirements?.traderLevel) 
+                          ? `${entry.limit ? `Limit: ${entry.limit}` : ''}
+                          ${entry.limit && entry.playertoTraderRequirements?.traderLevel ? ', ' : ''}
+                          ${entry.playertoTraderRequirements?.traderLevel ? `Trader lvl: ${entry.playertoTraderRequirements.traderLevel}` : ''}
+                        `: undefined
+                        }
+                      />
+                      </ListItem>
+                      ))}
+                    </List> 
+                  </Box>
+
+                </Box>
+              </Paper>
+            </Grid>
+
+            {/* Crafting section */}
+            <Grid size={12}>
+             
+              <Paper>
+                <Typography variant="h6" gutterBottom>
+                Crafting
+                </Typography>
+                
+                {craft && craft.map((craft, i) => (
+                 <Combination key={i} props={{ ...craft, kind: "Craft" }}/>
+                ))}
+                
+              </Paper>
+            </Grid>
+
+            {/* Barter section */}
+            <Grid size={12}>
+             
+              <Paper>
+                <Typography variant="h6" gutterBottom>
+                Barter
+                </Typography>
+                
+                {barter && barter.map((barter, i) => (
+                 <Combination key={i} props={{ ...barter, kind: "Barter" }}/>
+                ))}
+                                
+              </Paper>
+            </Grid>
+
+            {/* Quest */}
+            <Grid size={12}>
+            </Grid>
+
+          </Grid>
+        </Box>
         }
 
     </>)
     
     }
-
-
-
- 
      

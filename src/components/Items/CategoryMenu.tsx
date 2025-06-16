@@ -33,7 +33,7 @@ export function CategoryMenu({selectedCategory, setSelectedCategory}:Props) {
     const categoriesCache: CategoryType[] = queryClient.getQueryData([categoriesQuery.name])?? [];
 
     //This generate the bulk category array about which items should shown (from categoryLogic)
-    selectedBulkCategoryLogic({selected, categoriesCache, setSelectedCategory});
+    selectedBulkCategoryLogic({selected, setSelectedCategory, categoriesCache});
 
     useEffect(()=>{
         

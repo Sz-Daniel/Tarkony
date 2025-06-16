@@ -1,6 +1,8 @@
+import { itemBaseAdapter, itemDetailsAdapter } from "../adapters/itemsAdapter";
+import { singleItemAdapter } from "../adapters/itemSingleAdapter";
 import { useFetchIntoCache } from "../api/graphQLClient";
-import { singleItemAdapter, singleItemQuery } from "../api/itemSingleQuery";
-import { categoriesQuery, itemBaseAdapter, itemBaseQuery, itemDetailsAdapter, itemDetailsQuery } from "../api/itemsQuery";
+import { singleItemQuery } from "../api/itemSingleQuery";
+import { categoriesQuery,  itemBaseQuery,  itemDetailsQuery } from "../api/itemsQuery";
 import type { CategoryType, ItemBaseQueryType, ItemDetailQueryType } from "../types/Items/queryType";
 import type { ItemBaseResultType, ItemDetailResultType } from "../types/Items/responseType";
 import type { SingleItemQueryType } from "../types/ItemSingle/queryType";

@@ -31,14 +31,112 @@ export type ItemDetailQueryType = {
   name:string,
   normalizedName: string,
   wikiLink: string,
-  sellFor:traderForType[],
-  buyFor:traderForType[],
-  bartersFor: requiredItemsType[],
-  bartersUsing: rewardItemsType[],
-  craftsFor:requiredItemsType[],
-  craftsUsing: rewardItemsType[],
-  receivedFromTasks: receivedFromTasksType[],
+
+  sellFor: SellFor[],
+
+  buyFor: BuyFor[],
+
+  bartersUsing: BartersUsing[],
+
+  bartersFor: BartersFor[],
+
+  craftsUsing: CraftsUsing[],
+
+  craftsFor: CraftsFor[],
 };
+
+type CraftsUsing = {
+  id: string,
+  duration: number,
+  level: number,
+  station: Station,
+  taskUnlock:TaskUnlock,
+  requiredItems: QueryCountedItem[],
+  rewardItems: QueryCountedItem[]  
+}
+type CraftsFor = {
+  id: string,
+  duration: number,
+  level: number,
+  station: Station,
+  taskUnlock:TaskUnlock,
+  requiredItems: QueryCountedItem[],
+  rewardItems: QueryCountedItem[]  
+}
+
+type Station = {
+  name:string,
+  imageLink:string,
+}
+type BartersFor = {
+  id: string,
+  buyLimit:number,
+  level: number,
+  trader: traderDetail & Trader,
+  taskUnlock:TaskUnlock,
+  requiredItems: QueryCountedItem[]
+  rewardItems: QueryCountedItem[]
+}
+
+type BartersUsing = {
+  id: string,
+  buyLimit:number,
+  level: number,
+  trader: traderDetail & Trader,
+  taskUnlock:TaskUnlock 
+  requiredItems: QueryCountedItem[]
+  rewardItems: QueryCountedItem[]
+}
+type QueryCountedItem = {
+  count: number;
+  item: itemIcon;
+};
+
+type traderDetail = {
+  imageLink: string,
+  name: string
+}
+type BuyFor={
+  priceRUB:number,
+  price: number,
+  currency: string,
+  vendor: Vendor,
+}
+
+type Vendor = {
+  minTraderLevel: number,
+  buyLimit: number,
+  name: string,
+  trader: Trader,
+  taskUnlock: TaskUnlock,
+}
+type Trader ={
+  levels: Levels[],
+}
+type Levels = {
+  level: number,
+  requiredPlayerLevel:number,
+  requiredReputation:number,
+  requiredCommerce:number,
+}
+type TaskUnlock= {
+  name:string,
+  minPlayerLevel:number,
+}
+
+
+type SellFor={
+  priceRUB:number,
+  vendor: sellforVendor,
+  price: number,
+  currency: string,
+}
+
+type sellforVendor = {
+  name: string,
+  foundInRaidRequired:Boolean,
+}
+
 
 type BaseType = {
   id: string,

@@ -16,7 +16,7 @@ export function Items(){
     { (categoryFetch.isLoading || itemBaseFetch.isLoading) && <CircularProgress />}
     
     { categoryFetch.data && <CategoryMenu selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory}/>}
-    { itemBaseFetch.data &&<ItemList selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />}
+    { itemBaseFetch.data && <ItemList selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />}
   </>
   );
 }

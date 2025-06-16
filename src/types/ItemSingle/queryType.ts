@@ -13,6 +13,7 @@ export type SingleItemQueryType = {
   id:string,
   name:string,
   shortName:string,
+  categories: name[],
 
   lastLowPrice:number,
   low24hPrice:number,
@@ -49,58 +50,80 @@ export type SingleItemQueryType = {
 
   bartersUsing: BartersUsing[],
 
-  
-  
-  
+  bartersFor: BartersFor[],
+
+  craftsUsing: CraftsUsing[],
+
+  craftsFor: CraftsFor[],
+
+
 }
-type BartersUsing = {
+type CraftsUsing = {
+  id: string,
+  duration: number,
+  level: number,
+  station: Station,
+  taskUnlock:TaskUnlock,
+  requiredItems: QueryCountedItem[],
+  rewardItems: QueryCountedItem[]  
+}
+type CraftsFor = {
+  id: string,
+  duration: number,
+  level: number,
+  station: Station,
+  taskUnlock:TaskUnlock,
+  requiredItems: QueryCountedItem[],
+  rewardItems: QueryCountedItem[]  
+}
+
+type BartersFor = {
+  id: string,
   buyLimit:number,
-  trader: name
+  level: number,
+  trader: traderDetail & Trader,
+  taskUnlock:TaskUnlock,
+  requiredItems: QueryCountedItem[]
+  rewardItems: QueryCountedItem[]
+}
+
+type BartersUsing = {
+  id: string,
+  buyLimit:number,
+  level: number,
+  trader: traderDetail & Trader,
   taskUnlock:TaskUnlock 
-  requiredItems: CountedItem[]
-  rewardItems: CountedItem[]
-  requirements: Requirements[],
+  requiredItems: QueryCountedItem[]
+  rewardItems: QueryCountedItem[]
 }
-
-/**  
-  historicalPrices: HistoricalPrices[],
-  //Fragments Types
-type HistoricalPrices = {
-  offerCount:number,
-  price: number,
-  priceMin: number,
-  timestamp: string,
-}
-
-
-  sellFor:traderForType[],
-  buyFor:traderForType[],
-
-  craftsFor:requiredItemsType[],
-  craftsUsing: rewardItemsType[],
-  receivedFromTasks: receivedFromTasksType[],
- */
-
 
 type BuyFor={
   priceRUB:number,
   price: number,
   currency: string,
-
   vendor: Vendor,
-
-  requirements: Requirements[],
 }
-type Requirements = {
-  type:string,
-  value:number
+type Station = {
+  name:string,
+  imageLink:string,
 }
-
-type Vendor ={
+type Vendor = {
   minTraderLevel: number,
   buyLimit: number,
   name: string,
+  trader: Trader,
   taskUnlock: TaskUnlock,
+}
+
+type Trader ={
+  levels: Levels[],
+}
+
+type Levels = {
+  level: number,
+  requiredPlayerLevel:number,
+  requiredReputation:number,
+  requiredCommerce:number,
 }
 
 type TaskUnlock= {
@@ -108,14 +131,44 @@ type TaskUnlock= {
   minPlayerLevel:number,
 }
 
+
 type SellFor={
   priceRUB:number,
-  vendor: name,
+  vendor: sellforVendor,
   price: number,
   currency: string,
 }
 
-type requiredItemsType = {
+type sellforVendor = {
+  name: string,
+  foundInRaidRequired:Boolean,
+}
+
+//SubTypes
+type QueryCountedItem = {
+  count: number;
+  item: itemIcon;
+};
+
+type itemIcon = {
+    id: string,
+    name: string,
+    gridImageLink: string,
+};
+type traderDetail = {
+  imageLink: string,
+  name: string
+}
+type name ={
+  name: string
+};
+
+type normalizedName = {
+    normalizedName: string,
+};
+
+/**NOT USING
+ * type requiredItemsType = {
   requiredItems: CountedItem[];
 };
 
@@ -128,29 +181,8 @@ type receivedFromTasksType ={
   finishRewards: rewardTaskType  
 };
 
-type CountedItem = {
-  count: number;
-  item: itemIcon;
-};
-
 type rewardTaskType = {
   items: items[]
 };
 
-type itemIcon = {
-    name: string,
-    gridImageLink: string,
-};
-
-type items = {
-  count: number,
-  item: item,
-};
-
-type item = {
-  name: string,
-};
-
-type name ={
-  name: string
-};
+ */
