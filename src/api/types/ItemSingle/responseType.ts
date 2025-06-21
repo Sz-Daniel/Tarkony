@@ -44,7 +44,28 @@ export type SingleItemResultType = {
 
     craftOutput: Craft[],
 
+    taskNeed: TaskNeed[],
 
+    taskGive: TaskGive[],
+}
+
+
+type TaskGive= {
+    name: string,
+    reward: TaskItem[],
+}
+type TaskNeed = {
+    name: string,
+    task: Task[],
+}
+
+type Task = Description & TaskItem;
+type Description = {
+    description: string
+}
+type TaskItem = {
+  name: string,
+  count: number,
 }
 //craftUsing
 export type Craft =  CraftRequirement &{

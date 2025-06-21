@@ -24,6 +24,7 @@ export const singleItemQuery  = (normalizedName: string = ""): QueryType => {
             width
             weight
             hasGrid
+    
 
             inspectImageLink
             backgroundColor
@@ -210,6 +211,30 @@ export const singleItemQuery  = (normalizedName: string = ""): QueryType => {
                 }
               }
             }
+
+              usedInTasks {
+                name
+                objectives {
+                  ... on TaskObjectiveItem {
+                    description
+                    count
+                    item {
+                      name
+                      }
+                    }
+                  }
+                }
+              receivedFromTasks {
+                name
+                finishRewards {
+                  items {
+                    count
+                    item {
+                      name
+                    }
+                  }
+                }
+              }
 
             
 

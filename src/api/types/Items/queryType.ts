@@ -15,14 +15,14 @@ export type CategoryType = BaseType &{
   
 };
 
-
 export type ItemBaseQueryType = {
   id: string,
   name: string,
   gridImageLink: string,
   changeLast48h: number,
   changeLast48hPercent: number,
-  sellFor: traderForType[]
+  sellFor: traderForType[],
+  buyFor: traderForType[],
   category: normalizedName,
 };
 
@@ -43,6 +43,35 @@ export type ItemDetailQueryType = {
   craftsUsing: CraftsUsing[],
 
   craftsFor: CraftsFor[],
+
+  usedInTasks: UsedInTask[],
+
+  receivedFromTasks: ReceivedFromTask[],
+  
+};
+type ReceivedFromTask = {
+  name: string,
+  finishRewards: FinishRewards,
+};
+
+type FinishRewards = {
+  items: RewardItem[],
+};
+
+type RewardItem = {
+  count: number,
+  item: name,
+};
+
+type UsedInTask = {
+  name: string,
+  objectives: TaskObjectiveItem[],
+};
+
+type TaskObjectiveItem = {
+  description: string,
+  count: number,
+  item: name,
 };
 
 type CraftsUsing = {
@@ -172,6 +201,7 @@ type rewardTaskType = {
 };
 
 type itemIcon = {
+    id: string,
     name: string,
     gridImageLink: string,
 };

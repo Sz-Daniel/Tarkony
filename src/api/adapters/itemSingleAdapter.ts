@@ -154,7 +154,7 @@ export function singleItemAdapter(data: SingleItemQueryType): SingleItemResultTy
         img: item.item.gridImageLink ?? "",
         name: item.item.name ?? "",
       })),
-      }}),
+    }}),
     craftOutput: data.craftsUsing.map(output=>{
     return{
       id: output.id ?? "",
@@ -180,7 +180,29 @@ export function singleItemAdapter(data: SingleItemQueryType): SingleItemResultTy
         img: item.item.gridImageLink ?? "",
         name: item.item.name ?? "",
       })),
-    }})
+    }}),
+
+    taskNeed: data.usedInTasks.map((need)=>{
+      const tasks = need.objectives.filter((task)=> task.item.name.includes(data.name))
+      return{
+        name: need.name,
+        task: tasks.map((task)=> ({
+          description: task.description,
+          name: task.item.name,
+          count: task.count,
+        }))}
+    }),
+
+    taskGive: data.receivedFromTasks.map((get)=>{
+      return{
+        name: get.name,
+        reward: get.finishRewards.items.map((rewa)=>({
+          name: rewa.item.name,
+          count: rewa.count,
+        })),
+      }
+    }),
+
    
   }
 }

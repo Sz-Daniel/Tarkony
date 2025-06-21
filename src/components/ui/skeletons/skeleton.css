@@ -1,0 +1,81 @@
+.accordion-skeleton {
+  width: 956px;           /* Akkora, mint az Accordion */
+  height: 153px;          /* MUI Accordion alap magassága */
+  background: linear-gradient(
+    90deg,
+    #e0e0e0 25%,
+    #f0f0f0 37%,
+    #e0e0e0 63%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+ /* Köztes tér a listaelemek között */
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.chip-skeleton {
+  display: inline-block;
+  height: 32px;          /* MUI Chip magassága */
+  min-width: 48px;       /* Tipikus Chip szélesség */
+  border-radius: 16px;   /* Félköríves sarkok */
+  background: linear-gradient(
+    90deg,
+    #e0e0e0 25%,
+    #f0f0f0 37%,
+    #e0e0e0 63%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  margin: 4px;           /* Kis tér körülötte */
+}
+
+
+.accordion-details-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+}
+
+.accordion-details-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.column {
+  width: 48%;
+}
+
+.skeleton-line {
+  height: 16px;
+  margin: 8px 0;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    #e0e0e0 25%,
+    #f0f0f0 37%,
+    #e0e0e0 63%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.skeleton-link {
+  width: 60px;
+  height: 14px;
+  border-radius: 4px;
+  margin-top: 16px;
+}
+
+.links-row {
+  display: flex;
+  justify-content: space-between;
+}

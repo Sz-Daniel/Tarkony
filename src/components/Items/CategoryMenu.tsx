@@ -3,7 +3,7 @@ import { categoriesQuery } from "../../api/itemsQuery";
 import { useEffect, useState } from "react";
 import { Chip } from "@mui/material";
 import type { CategoryType } from "../../api/types/Items/queryType";
-import { selectedBulkCategoryLogic } from "./categoryLogic";
+import { useSelectedBulkCategoryLogic } from "./categoryLogic";
 
 type Props ={
     selectedCategory: string[],
@@ -33,7 +33,7 @@ export function CategoryMenu({selectedCategory, setSelectedCategory}:Props) {
     const categoriesCache: CategoryType[] = queryClient.getQueryData([categoriesQuery.name])?? [];
 
     //This generate the bulk category array about which items should shown (from categoryLogic)
-    selectedBulkCategoryLogic({selected, setSelectedCategory, categoriesCache});
+    useSelectedBulkCategoryLogic({selected, setSelectedCategory, categoriesCache});
 
     useEffect(()=>{
         
@@ -61,7 +61,7 @@ export function CategoryMenu({selectedCategory, setSelectedCategory}:Props) {
     //Chip disabled={ map Key always the selected category, in every rerender, if in the previous array found the selected categ, let that disabled. }
 
     return(
-    <>  
+    <div style={{margin: 4}}>  
         {Array.from(categoryListShow.entries()).map(([Mapkey, value])=> (
             <div key={Mapkey}>
             {value.map((cat,idx)=>(
@@ -73,6 +73,6 @@ export function CategoryMenu({selectedCategory, setSelectedCategory}:Props) {
             ))}
             </div>  
         ))}
-    </>
+    </div>
     )
 }

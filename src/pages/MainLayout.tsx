@@ -1,6 +1,8 @@
 import { Outlet } from "react-router-dom"
-import { LoggerComponent } from "../components/layout/LoggerComponent"
+
 import { Footer } from "../components/layout/Footer"
+import { LoggerComponent } from "../devtools/LoggerComponent"
+
 
 export function MainLayout() {
     return(<>

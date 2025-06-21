@@ -57,8 +57,8 @@ export function ItemSingle() {
                     <Chip label={`Size: ${item.width}x${item.height}`} sx={{ mt: 1 }} />
                     <Chip label={`Grid: ${item.hasGrid ? 'Yes' : 'No'}`} sx={{ mt: 1 }} />
                     <Box sx={{m:2}}>
-                      {item.categories.map(cat => (
-                      <Chip label={cat} sx={{ mt: 1 }} />
+                      {item.categories.map((cat, idx) => (
+                      <Chip key={idx} label={cat} sx={{ mt: 1 }} />
                       ))}
                     </Box>
                   </Box>
@@ -235,6 +235,38 @@ export function ItemSingle() {
 
             {/* Quest */}
             <Grid size={12}>
+              <Paper>
+                
+                <Typography variant="h6" gutterBottom>
+                Tasks
+                </Typography>
+
+                <Paper elevation={3}>
+
+                {item.taskNeed.map((task, idx)=>(
+                  <Paper key={idx} sx={{p:2}}>
+                    <Typography>{task.name}:</Typography>
+                    {task.task.map((items)=>(
+                      <Typography sx={{p:1}}>
+                      {items.description} - {items.count} db {items.name}<br/>
+                      </Typography>
+                      ))}
+                  </Paper>
+                ))}
+
+                {item.taskGive.map((task, idx)=>(
+                  <Paper key={idx} sx={{p:2}}>
+                  <Typography>{task.name}:</Typography>
+                  {task.reward.filter((filter)=> filter.name === item.name).map((items)=>(
+                    <Typography sx={{p:1}}>
+                    Get: {items.count} db {items.name}<br/>
+                    </Typography>
+                  ))}
+                  </Paper>
+                ))}
+
+                </Paper>
+              </Paper>
             </Grid>
 
           </Grid>

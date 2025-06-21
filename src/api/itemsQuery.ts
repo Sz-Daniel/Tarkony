@@ -6,58 +6,6 @@ import type { QueryType  } from "./types/Items/queryType";
  *  Key type name a feldolgozás alatt objektum azonosításra hogy tömböt adhasson vissza a fetch
  *  Query string for API call 
  */
-
-export const itemBaseQuery = {
-  name: 'itemBaseQuery',
-  key: 'items',
-  query: `   
-  query {
-    items {
-      id
-      name
-      category {
-        normalizedName,
-      } 
-      gridImageLink
-      changeLast48h
-      changeLast48hPercent
-      sellFor{ 
-        priceRUB
-        vendor{
-          name
-        }
-      }
-   
-    } 
-  }`
-}
-
-export const searchNameItemBaseQuery = (name: string = ""): QueryType => {
-  return {
-  name: `searchNameItemBaseQuery`,
-  key: 'items',
-  query: `   
-  query{
-    items(name: "${name}") {
-      id
-      name
-      category {
-        normalizedName
-      }
-      gridImageLink
-      changeLast48h
-      changeLast48hPercent
-      sellFor {
-        priceRUB
-        vendor {
-          name
-        }
-      }
-    }
-  }
-`}
-}
-
 export const categoriesQuery = {
   name: 'categoriesQuery',
   key: 'itemCategories',
@@ -77,6 +25,33 @@ export const categoriesQuery = {
   }`
 }
 
+export const itemBaseQuery = {
+  name: 'itemBaseQuery',
+  key: 'items',
+  query: `   
+  query {
+    items {
+      id
+      name
+      category { normalizedName } 
+      gridImageLink
+      changeLast48h
+      changeLast48hPercent
+      sellFor{ 
+        priceRUB
+        vendor{
+          name
+        }
+      }
+      buyFor {
+        priceRUB
+        vendor {
+          name
+        }
+      }
+    } 
+  }`
+}
 
 export const itemDetailsQuery = (id: string = ""): QueryType => {
   return {
@@ -162,7 +137,7 @@ export const itemDetailsQuery = (id: string = ""): QueryType => {
             }  
 
             bartersFor {
-            id
+              id
               level
               buyLimit
               taskUnlock {
@@ -198,7 +173,7 @@ export const itemDetailsQuery = (id: string = ""): QueryType => {
             } 
 
             craftsUsing {
-            id
+              id
               duration
               level
               station {
@@ -228,7 +203,7 @@ export const itemDetailsQuery = (id: string = ""): QueryType => {
             }  
 
             craftsFor {
-            id
+              id
               duration
               level
               station {
@@ -256,6 +231,32 @@ export const itemDetailsQuery = (id: string = ""): QueryType => {
                 }
               }
             }
+
+            
+            usedInTasks {
+              name
+              objectives {
+                ... on TaskObjectiveItem {
+                  description
+                  count
+                  item {
+                    name
+                    }
+                  }
+                }
+              }
+            receivedFromTasks {
+              name
+              finishRewards {
+                items {
+                  count
+                  item {
+                    name
+                  }
+                }
+              }
+            }
+
 
       }  
     }`

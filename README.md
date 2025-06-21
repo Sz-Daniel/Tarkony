@@ -1,4 +1,4 @@
-# Tarkony - 2025.06.16
+# Tarkony - 2025.06.21 - Readme is coming! 
 ### Guide
 
 On the main page, all on-hand items are listed first.
@@ -11,16 +11,22 @@ In the detailed data section, there's an All Data button that redirects the user
 
 ### Done:
 
-- Querys + Adapter + Types for Single Page 
-- Item Single minimal UI with dinamic Components 
-- ItemDetails refactored: Query, Combination 
+ - Started to use React.memo for ItemBaseDisplay (and tired to optimalise the page)
+ - Skeleton on isLoading (first iteration)
+ - Logger taken out, started to rendering while other component rendered so it was a big problem. Using console.log now
+ - Error status component in case of fetching isError
+ - Combination with prices in Combination componenet
+ - Item Single page Quests & ItemDetails
 
 ### Next:
 
-- Combination with prices
-- Item Single page Quests
+- Checkout: "Colt M4A1 5.56x45 assault rifle" - name problem
+- Themes Implement
+- Checkpoint!
+
 - IsItWorth? Bartel vs Craft Vs Trader Page
 - Modder compare Page
+- ItemSingle as pop-up as separeted window in ItemList
 - (In the end) Whole UI refactor
 
 ## Overview
@@ -103,7 +109,7 @@ Tarkony
 
 ## Routing
   '/' -> Items.tsx
-  '/items/normalizedName' -> ItemSingle.tsx
+  '/item/normalizedName' -> ItemSingle.tsx
 
 ### `graphQLClient.ts` + `itemSingleQuery.ts` + `itemsQuery.ts`
 
@@ -114,7 +120,7 @@ In progress: developing a standalone asynchronous fetch function (fetchQuery), n
 
 For direct usage, parameterized custom hooks from `graphQLClient.ts`, are available as Single query hook functions.
 
-### `CategoryMenu.tsx`
+### `CategoryMenu.tsx` + `categoryLogic.ts`
 
 This component handles category selection, allowing the user to browse items by category.
 It uses an intermediate parallel category processing, which collects the names of all child categories at every level under the selected category, and based on this, displays all related items across all levels of the selected category.
@@ -132,6 +138,8 @@ ItemDetails (see below)
 SearchBar (see below)
 
 Accordion mostly displays simple text, so I had to override its parent component to improve layout.
+
+Separating the ItemBaseDisplay for useMemo porpuse
 
 
 ### `ItemDetail.tsx`

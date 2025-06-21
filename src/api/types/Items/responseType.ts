@@ -1,18 +1,23 @@
 export type ItemBaseResultType = {
-  id: string | null,
-  name: string,
-  iconURL: string,
-  bestPrice: number | null,
-  bestPlace: string | null,
-  changePrice: number,
-  changePercent: number,
-  category: string,
+    id: string | null,
+    name: string,
+    iconURL: string,
+    bestSeller: PriceDeal,
+    bestBuy:  PriceDeal[],
+    changePrice: number,
+    changePercent: number,
+    category: string,
 };
 
 export type ItemDetailResultType = {
   id: string | null,
+
+  name: string,
+
   normalizedName: string,
+
   wiki: string,
+  
   sellTo: SellTo[],
  
   buyFrom: BuyFrom[],
@@ -24,12 +29,36 @@ export type ItemDetailResultType = {
   craftInput: Craft[],
 
   craftOutput: Craft[],
-};
 
-type TaskReward = {
+  taskNeed: TaskNeed[],
+
+  taskGive: TaskGive[],
+
+
+};
+type TaskGive= {
+    name: string,
+    reward: TaskItem[],
+}
+type TaskNeed = {
+    name: string,
+    task: Task[],
+}
+
+type Task = Description & TaskItem;
+type Description = {
+    description: string
+}
+type TaskItem = {
   name: string,
   count: number,
 }
+ 
+export type PriceDeal = {
+    price: number | null,
+    place: string | null,
+}
+
 type CountedItemMicro = {
   count: number,
   name: string,

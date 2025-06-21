@@ -1,18 +1,18 @@
 import { Accordion, AccordionSummary, Box, Pagination,Stack,styled,Typography } from "@mui/material"
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { itemBaseQuery } from "../../api/itemsQuery";
-import { ItemDetail } from "./ItemDetail";
+import { ItemDetailDisplay } from "./ItemDetail";
 import { SearchBar } from "../ui/SeachBar";
 import type { ItemBaseResultType } from "../../api/types/Items/responseType";
 
-type Props ={
+type ItemListProps ={
     selectedCategory: string[],
     setSelectedCategory: React.Dispatch<React.SetStateAction<string[]>>
 }
 
-export function ItemList({selectedCategory, setSelectedCategory}:Props) {
+export function ItemList({selectedCategory, setSelectedCategory}:ItemListProps) {
 
     const [expanded, setExpanded] = useState<string | false>(false);
     //paginator
@@ -30,14 +30,14 @@ export function ItemList({selectedCategory, setSelectedCategory}:Props) {
 
     //Filter showItem list -> category -> searchedName
     useEffect(() => {
-        //console.log("Search", itemBaseListCache, selectedCategory, searchedName)
-        if (itemBaseListCache.length !== 0) {
-        setShowItem(itemBaseListCache.filter((list)=> selectedCategory.includes(list.category)))
-            if (searchedName !== '') {
-                const lowerSearch = searchedName.toLowerCase();
-                setShowItem(itemBaseListCache.filter((list)=> list.name.toLowerCase().includes(lowerSearch)))
-            }
-        }
+        const categoryFiltered = itemBaseListCache
+        .filter(item => selectedCategory.includes(item.category));
+
+        const finalFiltered = !searchedName
+        ? categoryFiltered
+        : categoryFiltered.filter(item => item.name.toLowerCase().includes(searchedName.toLowerCase()));
+
+        setShowItem(finalFiltered);
     }, [itemBaseListCache, selectedCategory, searchedName]);
 
     //Accordion
@@ -74,58 +74,13 @@ export function ItemList({selectedCategory, setSelectedCategory}:Props) {
             key={item.id}
             expanded={selectedItem === item.id}
             onChange={accordionHandleChange(item.id)}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}
-            sx={{
-            '& .MuiAccordionSummary-content': {
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between', // vagy 'center' ha kell
-                gap: 2,
-            },
-            }}>
-            
-                <Box sx={{ flex: 1, alignSelf: 'flex-start' }}>
-                    <Item>
-                        <img
-                        src={item.iconURL}
-                        alt={item.name}
-                        loading='lazy'
-                        style={{ maxWidth: '100%' }}
-                        />
-                    </Item>
-                </Box>
-                
-                <Box sx={{ flex: 2 }}>
-                    <Item>
-                        <Typography variant='body1'>{item.name}</Typography>
-                    </Item>
-                </Box>
+           
 
-                <Box sx={{ flex: 1, alignSelf: 'flex-end' }}>
-                    <Stack spacing={0}>
-                        <Item>Sell to: {item.bestPlace} </Item>
-                        <Item>
-                        {item.bestPrice}
-                        {'Flea Market' === item.bestPlace ? (
-                            <Typography
-                            component='span'
-                            color={item.changePercent > 0 ? 'red' : 'green'}
-                            >
-                            <sup>
-                                {item.changePercent}% {item.changePrice}
-                            </sup>
-                            </Typography>
-                        ) : (
-                            ''
-                        )}
-                        </Item>
-                    </Stack>
-                </Box>
-
-            </AccordionSummary>
+                {/* TSX component is in the end of this file with memo with AccordionSummary*/}
+                <ItemBaseDisplay item={item}/>
             
-                    {/* AccordionDetails in ItemDetails*/}
-                    {selectedItem === item.id && <ItemDetail itemId={item.id} />}
+                {/* TSX component is in ItemDetail with AccordionDetails*/}
+                {selectedItem === item.id && <ItemDetailDisplay itemId={item.id} />}
              
             </Accordion>
         
@@ -139,3 +94,71 @@ export function ItemList({selectedCategory, setSelectedCategory}:Props) {
         />
     </>)
 }
+
+/**
+ * Using React.memo on this one, props doesnt changing, 
+ * but with filtering and/or searchingName it can be re-rendering 
+ * ItemDetailDisplay - doesn't need
+ */
+type ItemBaseDisplayProps = {
+    item: ItemBaseResultType
+}
+const ItemBaseDisplay = memo(
+    ( {item} : ItemBaseDisplayProps) => {
+
+    const Item = styled(Box)(({ theme }) => ({
+        padding: theme.spacing(2),
+        textAlign: 'center',
+        color: theme.palette.text.secondary,
+    }));
+
+    return(<>
+    <AccordionSummary expandIcon={<ExpandMoreIcon />}
+    sx={{
+    '& .MuiAccordionSummary-content': {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between', // vagy 'center' ha kell
+        gap: 2,
+    },
+    }}>
+        <Box sx={{ flex: 1, alignSelf: 'flex-start' }}>
+            <Item>
+                <img
+                src={item.iconURL}
+                alt={item.name}
+                loading='lazy'
+                style={{ maxWidth: '100%' }}
+                />
+            </Item>
+        </Box>
+        
+        <Box sx={{ flex: 2 }}>
+            <Item>
+                <Typography variant='body1'>{item.name}</Typography>
+            </Item>
+        </Box>
+
+        <Box sx={{ flex: 1, alignSelf: 'flex-end' }}>
+            <Stack spacing={0}>
+                <Item>Sell to: {item.bestSeller.place} </Item>
+                <Item>
+                {item.bestSeller.price}
+                {'Flea Market' === item.bestSeller.place ? (
+                    <Typography
+                    component='span'
+                    color={item.changePercent > 0 ? 'red' : 'green'}
+                    >
+                    <sup>
+                        {item.changePercent}% {item.changePrice}
+                    </sup>
+                    </Typography>
+                ) : (
+                    ''
+                )}
+                </Item>
+            </Stack>
+        </Box>
+    </AccordionSummary>
+    </>)
+});

@@ -1,12 +1,14 @@
-import { AccordionDetails, Box, Button, CircularProgress, Link, List, ListItem, ListItemText, Tab, Tabs, Typography } from "@mui/material";
+import { AccordionDetails, Box, Button, Link, List, ListItem, ListItemText, Paper, Tab, Tabs, Typography } from "@mui/material";
 import { Grid, styled } from "@mui/system";
 import type { ItemDetailPropsType } from "../../api/types/type";
-import type { ItemDetailResultType } from "../../api/types/Items/responseType";
+import type { ItemBaseResultType, ItemDetailResultType } from "../../api/types/Items/responseType";
 import { useItemDetailQuery } from "../../api/hooks/APICalls";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { a11yProps, CustomTabPanel } from "../ui/Tabs";
 import { Combination } from "../ui/Combination";
 import { useState } from "react";
+import { Skeleton } from "../ui/skeletons/Skeleton";
+
 
 export const Item = styled(Box)(({ theme }) => ({
     padding: theme.spacing(2),
@@ -14,7 +16,7 @@ export const Item = styled(Box)(({ theme }) => ({
 }));
 
 
-export function ItemDetail({itemId}:ItemDetailPropsType) {
+const ItemDetailDisplay = ({itemId}:ItemDetailPropsType) => {
 
     const navigate = useNavigate();
 
@@ -35,16 +37,26 @@ export function ItemDetail({itemId}:ItemDetailPropsType) {
       );
       craft = [...craftInputSort, ...item.craftOutput]
     }
-        if (item !== null) {
+
+    if (item !== null) {
       const barterInputSort = item.barterInput.filter(
         (input) => !item.barterOutput.some((output) => output.id === input.id)
       );
       barter = [...barterInputSort, ...item.barterOutput]
     }
-   
+
+    const tasks = () => {
+        if (item?.taskGive.length === 0 || item?.taskNeed.length === 0) {
+            return true
+        } else {
+            return false
+        }
+        
+    }
+
     return(
     <>
-        {isLoading && <CircularProgress />}
+        {isLoading && <Skeleton component="ItemDetail" />}
         {item && 
 
         <AccordionDetails>
@@ -52,11 +64,13 @@ export function ItemDetail({itemId}:ItemDetailPropsType) {
             <Box>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <Tabs value={value} onChange={tabsHandleChange} aria-label="basic tabs example">
-                    <Tab label="Trader" {...a11yProps(0)} />
-                    <Tab label="Craft" {...a11yProps(1)} />
-                    <Tab label="Barter" {...a11yProps(2)} />
+                        <Tab label="Trader" {...a11yProps(0)} />
+                        <Tab label="Craft" {...a11yProps(1)} sx={{ display: (craft && craft.length === 0) ? 'none' : 'block' }}/>
+                        <Tab label="Barter" {...a11yProps(2)} sx={{ display: (barter && barter.length === 0) ? 'none' : 'block' }}/>
+                        <Tab label="Tasks" {...a11yProps(3)} sx={{ display: (tasks()) ? 'none' : 'block' }}/>
                     </Tabs>
                 </Box>
+
                 <CustomTabPanel value={value} index={0}>
                     <Grid size={12}>
                     
@@ -106,17 +120,22 @@ export function ItemDetail({itemId}:ItemDetailPropsType) {
                    
                     </Grid>
                 </CustomTabPanel>
+
                 <CustomTabPanel value={value} index={1}>
                     <Box sx={{maxHeight:400, overflowY: 'auto' }}>
                         <Typography variant="h6" gutterBottom>
                         Crafting
                         </Typography>
 
-                        {craft && craft.map((craft, i) => (
-                            <Combination key={i} props={{ ...craft, kind: "Craft" }}/>
-                        ))}
+                        {craft && craft.map((craft, i) => {
+                            return <Combination key={i} props={{ ...craft, kind: "Craft" }}/>
+                        }
+                        )}
+
+
                     </Box>      
                 </CustomTabPanel>
+
                 <CustomTabPanel value={value} index={2}>
                      <Box sx={{maxHeight:500, overflowY: 'auto' }}>
                         <Typography variant="h6" gutterBottom>
@@ -129,17 +148,51 @@ export function ItemDetail({itemId}:ItemDetailPropsType) {
                         ))}
                     </Box>
                 </CustomTabPanel>
+
+                <CustomTabPanel value={value} index={3}>
+                     <Box sx={{maxHeight:500, overflowY: 'auto' }}>
+                         <Typography variant="h6" gutterBottom>
+                        Tasks
+                        </Typography>
+
+                        <Paper elevation={3}>
+
+                        {item.taskNeed.map((task, idx)=>(
+                        <Paper key={idx} sx={{p:2}}>
+                            <Typography>{task.name}:</Typography>
+                            {task.task.map((items,idx)=>(
+                            <Typography key={idx} sx={{p:1}}>
+                            {items.description} - {items.count} db {items.name}<br/>
+                            </Typography>
+                            ))}
+                        </Paper>
+                        ))}
+
+                        {item.taskGive.map((task, idx)=>(
+                        <Paper key={idx} sx={{p:2}}>
+                        <Typography>{task.name}:</Typography>
+                        {task.reward.filter((filter)=> filter.name === item.name).map((items)=>(
+                            <Typography sx={{p:1}}>
+                            Get: {items.count} db {items.name}<br/>
+                            </Typography>
+                        ))}
+                        </Paper>
+                        ))}
+                        </Paper>
+                    </Box>
+                </CustomTabPanel>
+
             </Box>
             <Box sx={{ display: 'flex', gap: 1}}>
 
                 <Box sx={{ flex: 2, alignSelf: 'flex-start'}}>
-                    <Link href={item.wiki}>Wiki</Link>
+                    <Link href={item.wiki} target="_blank" rel="noopener noreferrer" >Wiki</Link>
                 </Box>
 
                 <Button sx={{ flex: 2, alignSelf: 'flex-start'}}
                     onClick={()=>{navigate(`/item/${item.normalizedName}`)}}
-                    >
-                    <Typography>All data</Typography>
+                >
+                    All data
                 </Button>   
 
             </Box>
@@ -148,3 +201,5 @@ export function ItemDetail({itemId}:ItemDetailPropsType) {
     </>
     )
 }
+
+export { ItemDetailDisplay };
