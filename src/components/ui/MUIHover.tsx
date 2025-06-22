@@ -8,7 +8,7 @@ type HoverPropsType = {
   children: React.ReactNode;
 };
 
-export const MUIHover: React.FC<HoverPropsType> = ({title, children}) => {
+export const MUIHover: React.FC<HoverPropsType> = ({ title, children }) => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
   const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -51,4 +51,4 @@ export const MUIHover: React.FC<HoverPropsType> = ({title, children}) => {
       </Popover>
     </Box>
   );
-}
+};

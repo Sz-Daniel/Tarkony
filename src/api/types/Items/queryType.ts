@@ -1,224 +1,189 @@
-/** Query type for API GraphQL calls -> api \ query.ts
+/** Query type for API GraphQL calls -> api\query.ts
  * name: key name for cache
- * key: Type key which indicate what kinda data result obj will get and helps to give back only the array
- * query: containts query string
+ * key: type key indicating the kind of data the result object will contain, enabling extraction of only the array
+ * query: contains the query string
  */
 export type QueryType = {
-  name: string,
-  key: string,
-  query: string,
+  name: string;
+  key: string;
+  query: string;
 };
 
-export type CategoryType = BaseType &{
-  children: normalizedName[],
-  parent: normalizedName,
-  
+export type CategoryType = BaseType & {
+  children: normalizedName[];
+  parent: normalizedName;
 };
 
 export type ItemBaseQueryType = {
-  id: string,
-  name: string,
-  gridImageLink: string,
-  changeLast48h: number,
-  changeLast48hPercent: number,
-  sellFor: traderForType[],
-  buyFor: traderForType[],
-  category: normalizedName,
+  id: string;
+  name: string;
+  gridImageLink: string;
+  changeLast48h: number;
+  changeLast48hPercent: number;
+  sellFor: traderForType[];
+  buyFor: traderForType[];
+  category: normalizedName;
 };
 
 export type ItemDetailQueryType = {
-  id: string,
-  name:string,
-  normalizedName: string,
-  wikiLink: string,
+  id: string;
+  name: string;
+  normalizedName: string;
+  wikiLink: string;
 
-  sellFor: SellFor[],
+  sellFor: SellFor[];
 
-  buyFor: BuyFor[],
+  buyFor: BuyFor[];
 
-  bartersUsing: BartersUsing[],
+  bartersUsing: BartersUsing[];
 
-  bartersFor: BartersFor[],
+  bartersFor: BartersFor[];
 
-  craftsUsing: CraftsUsing[],
+  craftsUsing: CraftsUsing[];
 
-  craftsFor: CraftsFor[],
+  craftsFor: CraftsFor[];
 
-  usedInTasks: UsedInTask[],
+  usedInTasks: UsedInTask[];
 
-  receivedFromTasks: ReceivedFromTask[],
-  
+  receivedFromTasks: ReceivedFromTask[];
 };
 type ReceivedFromTask = {
-  name: string,
-  finishRewards: FinishRewards,
+  name: string;
+  finishRewards: FinishRewards;
 };
 
 type FinishRewards = {
-  items: RewardItem[],
+  items: RewardItem[];
 };
 
 type RewardItem = {
-  count: number,
-  item: name,
+  count: number;
+  item: name;
 };
 
 type UsedInTask = {
-  name: string,
-  objectives: TaskObjectiveItem[],
+  name: string;
+  objectives: TaskObjectiveItem[];
 };
 
 type TaskObjectiveItem = {
-  description: string,
-  count: number,
-  item: name,
+  description: string;
+  count: number;
+  item: name;
 };
 
 type CraftsUsing = {
-  id: string,
-  duration: number,
-  level: number,
-  station: Station,
-  taskUnlock:TaskUnlock,
-  requiredItems: QueryCountedItem[],
-  rewardItems: QueryCountedItem[]  
-}
+  id: string;
+  duration: number;
+  level: number;
+  station: Station;
+  taskUnlock: TaskUnlock;
+  requiredItems: QueryCountedItem[];
+  rewardItems: QueryCountedItem[];
+};
 type CraftsFor = {
-  id: string,
-  duration: number,
-  level: number,
-  station: Station,
-  taskUnlock:TaskUnlock,
-  requiredItems: QueryCountedItem[],
-  rewardItems: QueryCountedItem[]  
-}
+  id: string;
+  duration: number;
+  level: number;
+  station: Station;
+  taskUnlock: TaskUnlock;
+  requiredItems: QueryCountedItem[];
+  rewardItems: QueryCountedItem[];
+};
 
 type Station = {
-  name:string,
-  imageLink:string,
-}
+  name: string;
+  imageLink: string;
+};
 type BartersFor = {
-  id: string,
-  buyLimit:number,
-  level: number,
-  trader: traderDetail & Trader,
-  taskUnlock:TaskUnlock,
-  requiredItems: QueryCountedItem[]
-  rewardItems: QueryCountedItem[]
-}
+  id: string;
+  buyLimit: number;
+  level: number;
+  trader: traderDetail & Trader;
+  taskUnlock: TaskUnlock;
+  requiredItems: QueryCountedItem[];
+  rewardItems: QueryCountedItem[];
+};
 
 type BartersUsing = {
-  id: string,
-  buyLimit:number,
-  level: number,
-  trader: traderDetail & Trader,
-  taskUnlock:TaskUnlock 
-  requiredItems: QueryCountedItem[]
-  rewardItems: QueryCountedItem[]
-}
+  id: string;
+  buyLimit: number;
+  level: number;
+  trader: traderDetail & Trader;
+  taskUnlock: TaskUnlock;
+  requiredItems: QueryCountedItem[];
+  rewardItems: QueryCountedItem[];
+};
 type QueryCountedItem = {
   count: number;
   item: itemIcon;
 };
 
 type traderDetail = {
-  imageLink: string,
-  name: string
-}
-type BuyFor={
-  priceRUB:number,
-  price: number,
-  currency: string,
-  vendor: Vendor,
-}
+  imageLink: string;
+  name: string;
+};
+type BuyFor = {
+  priceRUB: number;
+  price: number;
+  currency: string;
+  vendor: Vendor;
+};
 
 type Vendor = {
-  minTraderLevel: number,
-  buyLimit: number,
-  name: string,
-  trader: Trader,
-  taskUnlock: TaskUnlock,
-}
-type Trader ={
-  levels: Levels[],
-}
+  minTraderLevel: number;
+  buyLimit: number;
+  name: string;
+  trader: Trader;
+  taskUnlock: TaskUnlock;
+};
+type Trader = {
+  levels: Levels[];
+};
 type Levels = {
-  level: number,
-  requiredPlayerLevel:number,
-  requiredReputation:number,
-  requiredCommerce:number,
-}
-type TaskUnlock= {
-  name:string,
-  minPlayerLevel:number,
-}
+  level: number;
+  requiredPlayerLevel: number;
+  requiredReputation: number;
+  requiredCommerce: number;
+};
+type TaskUnlock = {
+  name: string;
+  minPlayerLevel: number;
+};
 
-
-type SellFor={
-  priceRUB:number,
-  vendor: sellforVendor,
-  price: number,
-  currency: string,
-}
+type SellFor = {
+  priceRUB: number;
+  vendor: sellforVendor;
+  price: number;
+  currency: string;
+};
 
 type sellforVendor = {
-  name: string,
-  foundInRaidRequired:Boolean,
-}
-
+  name: string;
+  foundInRaidRequired: Boolean;
+};
 
 type BaseType = {
-  id: string,
-  name: string,
-  normalizedName: string,
+  id: string;
+  name: string;
+  normalizedName: string;
 };
 
-export type traderForType={
-  priceRUB:number,
-  vendor: name
-};
-
-type requiredItemsType = {
-  requiredItems: CountedItem[];
-};
-
-type rewardItemsType = {
-  rewardItems: CountedItem[];
-};
-
-type receivedFromTasksType ={
-  name:string,
-  finishRewards: rewardTaskType  
-};
-
-type CountedItem = {
-  count: number;
-  item: itemIcon;
-};
-
-type rewardTaskType = {
-  items: items[]
+export type traderForType = {
+  priceRUB: number;
+  vendor: name;
 };
 
 type itemIcon = {
-    id: string,
-    name: string,
-    gridImageLink: string,
-};
-
-type items = {
-  count: number,
-  item: item,
-};
-
-type item = {
-  name: string,
+  id: string;
+  name: string;
+  gridImageLink: string;
 };
 
 type normalizedName = {
-    normalizedName: string,
+  normalizedName: string;
 };
 
-type name ={
-  name: string
+type name = {
+  name: string;
 };

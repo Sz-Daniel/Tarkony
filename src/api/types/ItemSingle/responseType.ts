@@ -1,146 +1,138 @@
 export type SingleItemResultType = {
-    id:string,
-    name:string,
-    shortName:string,
-    categories: string[],
+  id: string;
+  name: string;
+  shortName: string;
+  categories: string[];
 
-    lastLowPrice:number,
-    low24hPrice:number,
-    avg24hPrice:number,
-    high24hPrice:number,
-    changeLast48hPercent:number,
-    changeLast48h:number,
-    lastOfferCount:number,
+  width: number;
+  weight: number;
+  height: number;
+  hasGrid: number;
 
-    width:number,
-    weight:number,
-    hasGrid:number,
+  inspectImageLink: string;
+  backgroundColor: string;
+  gridImageLink: string;
 
-    inspectImageLink:string,
-    backgroundColor:string,
-    gridImageLink:string,
+  description: string;
+  wikiLink: string;
 
-    description:string,
-    wikiLink:string,
+  updated: string;
 
-    height:number,
-    velocity:number,
-    recoilModifier:number,
-    loudness:number,
-    accuracyModifier:number,
-    ergonomicsModifier:number,
+  fleaPrice: {
+    lastLowPrice: number;
+    low24hPrice: number;
+    avg24hPrice: number;
+    high24hPrice: number;
+    changeLast48hPercent: number;
+    changeLast48h: number;
+    lastOfferCount: number;
+  } | null;
 
-    updated:string,
-    
-    sellTo: SellTo[],
+  stats: {
+    velocity: number;
+    recoilModifier: number;
+    loudness: number;
+    accuracyModifier: number;
+    ergonomicsModifier: number;
+  } | null;
 
-    buyFrom: BuyFrom[],
+  sellTo: SellTo[];
 
-    barterInput: Barter[],
+  buyFrom: BuyFrom[];
 
-    barterOutput: Barter[],
+  barterInput: Barter[];
 
-    craftInput: Craft[],
+  barterOutput: Barter[];
 
-    craftOutput: Craft[],
+  craftInput: Craft[];
 
-    taskNeed: TaskNeed[],
+  craftOutput: Craft[];
 
-    taskGive: TaskGive[],
-}
+  taskNeed: TaskNeed[];
 
+  taskGive: TaskGive[];
+};
 
-type TaskGive= {
-    name: string,
-    reward: TaskItem[],
-}
+type TaskGive = {
+  name: string;
+  reward: TaskItem[];
+};
 type TaskNeed = {
-    name: string,
-    task: Task[],
-}
+  name: string;
+  task: Task[];
+};
 
 type Task = Description & TaskItem;
 type Description = {
-    description: string
-}
+  description: string;
+};
 type TaskItem = {
-  name: string,
-  count: number,
-}
+  name: string;
+  count: number;
+};
 //craftUsing
-export type Craft =  CraftRequirement &{
-    inputItems: ResponseCountedItem[],
-    outputItems: ResponseCountedItem[],
-}
+export type Craft = CraftRequirement & {
+  inputItems: ResponseCountedItem[];
+  outputItems: ResponseCountedItem[];
+};
 
 type CraftRequirement = {
-    id: string,
-    duration: number,
-    stationRequirement: StationRequirement,
-    questRequirement: QuestRequirement,
-}
+  id: string;
+  duration: number;
+  stationRequirement: StationRequirement;
+  questRequirement: QuestRequirement;
+};
 
-type StationRequirement =  {
-    level:number,
-    stationName: string,
-    stationIcon: string,
-}
+type StationRequirement = {
+  level: number;
+  stationName: string;
+  stationIcon: string;
+};
 
+export type Barter = PurchaseRequirement & {
+  inputItems: ResponseCountedItem[];
+  outputItems: ResponseCountedItem[];
+};
 
-export type Barter = PurchaseRequirement &{
-    inputItems: ResponseCountedItem[],
-    outputItems: ResponseCountedItem[],
-}
-
-export type ResponseCountedItem ={
-    count: number;
-    id: string,
-    img: string;
-    name: string;
-}
+export type ResponseCountedItem = {
+  count: number;
+  id: string;
+  img: string;
+  name: string;
+};
 
 type SellTo = PriceInfo & {
-    fir: Boolean,
-    traderName: string,
-}
+  fir: Boolean;
+  traderName: string;
+};
 
-type BuyFrom = 
-    PriceInfo &
-    PurchaseRequirement
+type BuyFrom = PriceInfo & PurchaseRequirement;
 
 type PriceInfo = {
-    priceRub: number,
-    price: number,
-    priceCurrency: string,
-}
+  priceRub: number;
+  price: number;
+  priceCurrency: string;
+};
 
 type PurchaseRequirement = {
-    id: string,
-    limit: number,
-    playertoTraderRequirements: PlayertoTraderRequirements,
-    questRequirement: QuestRequirement,
-}
-type QuestRequirement ={
-    level: number,
-    name: string,
-}
+  id: string;
+  limit: number;
+  playertoTraderRequirements: PlayertoTraderRequirements;
+  questRequirement: QuestRequirement;
+};
+type QuestRequirement = {
+  level: number;
+  name: string;
+};
 
 type PlayertoTraderRequirements = {
-    traderName: string,
-    traderIcon: string,
-    traderLevel:number,
-    playerLevel:number,
-    reputation:number,
-    commerce:number,
-}
-
-
-
-
-
-
-
-
+  traderName: string;
+  traderIcon: string;
+  traderLevel: number;
+  playerLevel: number;
+  reputation: number;
+  commerce: number;
+};
 
 /** NOT USING
  * type HistoricalPrices = {

@@ -1,63 +1,63 @@
-import axios, { AxiosError } from "axios";
-import { useQuery } from "@tanstack/react-query";
-import type{ QueryType } from "./types/Items/queryType";
-import { Logger } from "../devtools/Logger";
+import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
+import type { QueryType } from './types/Items/queryType';
 
 const STALE_TIME_WEEKLY = 1000 * 60 * 60 * 24 * 7;
 
-/**  useFetchIntoCache
- * @param query which contains a name for cache name, query key (desc in return) and the query call string
- * @param adapter optional for formatting the query response data for convertible to usable data
- * @returns with the query key data objects will sorted out and return only the array, opcionally it can reformat the data structure for easier usage with adapter
+/** useFetchIntoCache
+ * @param query Object containing:
+ * name: cache key name
+ * key: query key (described in return)
+ * query: the GraphQL query string
+ * @param adapter Optional function to format the query response data into a usable structure
+ * @returns The data corresponding to the query key, filtered to return only the array; optionally reformats the data structure via the adapter for easier use
  */
 
- export function useFetchIntoCache<TQuery, TAdapter = TQuery>(
-    query: QueryType,
-    adapter?: (data: TQuery ) => TAdapter,
-    refreshTime = STALE_TIME_WEEKLY
+export function useFetchIntoCache<TQuery, TAdapter = TQuery>(
+  query: QueryType,
+  adapter?: (data: TQuery) => TAdapter,
+  refreshTime = STALE_TIME_WEEKLY
 ) {
-    return useQuery({
-        queryKey: [query.name],
-        queryFn: async() => {
-            const raw = await fetchGraphQLwQuery(query.query);
-             console.log("Raw: " + query.name + " useFetchIntoCache", raw)
-            const useableField = raw.data[query.key] as TQuery; 
-            const result = adapter ? adapter(useableField) : useableField
-             console.log("Result: " + query.name + " useFetchIntoCache", result)
-            return result
-        },
-        throwOnError: (error,query) => {
-             console.log("Error: " + query.options.queryKey, { error, query})
-            return false
-        },
-        staleTime: refreshTime,
-    });
+  return useQuery({
+    queryKey: [query.name],
+    queryFn: async () => {
+      const raw = await fetchGraphQLwQuery(query.query);
+      console.log('Raw: ' + query.name + ' useFetchIntoCache', raw);
+      const useableField = raw.data[query.key] as TQuery;
+      const result = adapter ? adapter(useableField) : useableField;
+      console.log('Result: ' + query.name + ' useFetchIntoCache', result);
+      return result;
+    },
+    throwOnError: (error, query) => {
+      console.log('Error: ' + query.options.queryKey, { error, query });
+      return false;
+    },
+    staleTime: refreshTime,
+  });
 }
 
 //Axios setup for POST, only-one type what we need
-export async function fetchGraphQLwQuery( query: string) {
-    try {
-        const response = await gqlClient.post('', { query });
-        if (response.data.errors) {
-            console.log('GraphQL Error', response.data.errors);
-            throw new Error(JSON.stringify(response.data.errors));
-        }
-        return response.data;
-    } catch (error) {
-        throw error;
+export async function fetchGraphQLwQuery(query: string) {
+  try {
+    const response = await gqlClient.post('', { query });
+    if (response.data.errors) {
+      console.log('GraphQL Error', response.data.errors);
+      throw new Error(JSON.stringify(response.data.errors));
     }
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 }
 
 //Initalize Axios client
 const gqlClient = axios.create({
-    baseURL: 'https://api.tarkov.dev/graphql',
-    headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-    },
-})
-
-
+  baseURL: 'https://api.tarkov.dev/graphql',
+  headers: {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+  },
+});
 
 /***I tried so hard and gets so far ...
  * 
@@ -104,4 +104,3 @@ const gqlClient = axios.create({
 }
 
  */
-

@@ -1,7 +1,12 @@
-import type { QueryType } from "./types/Items/queryType"
+import type { QueryType } from './types/Items/queryType';
 
-export const singleItemQuery  = (normalizedName: string = ""): QueryType => {
-    return {
+/** Queries
+ * Name usage for cache naming
+ * Key type name for identifying the object being processed so that the fetch can return an array
+ * Query string for the API call
+ */
+export const singleItemQuery = (normalizedName: string = ''): QueryType => {
+  return {
     name: `singleItemQuery-${normalizedName}`,
     key: 'item',
     query: `  
@@ -212,95 +217,32 @@ export const singleItemQuery  = (normalizedName: string = ""): QueryType => {
               }
             }
 
-              usedInTasks {
-                name
-                objectives {
-                  ... on TaskObjectiveItem {
-                    description
-                    count
-                    item {
-                      name
-                      }
-                    }
-                  }
-                }
-              receivedFromTasks {
-                name
-                finishRewards {
-                  items {
-                    count
-                    item {
-                      name
+            usedInTasks {
+              name
+              objectives {
+                ... on TaskObjectiveItem {
+                  description
+                  count
+                  item {
+                    name
                     }
                   }
                 }
               }
-
-            
-
-
+            receivedFromTasks {
+              name
+              finishRewards {
+                items {
+                  count
+                  item {
+                    name
+                  }
+                }
+              }
+            }
 
         }
     }
-    `}
-}
-
-/**
- *         
-
-    bartersFor {
-      requiredItems {
-        count
-        item {
-          gridImageLink
-          name
-        }
-      }
-    }
-
-    bartersUsing {
-      rewardItems {
-        count
-        item {
-          gridImageLink
-          name
-        }
-      }
-    }
-
-    craftsFor {
-      requiredItems {
-        count
-        item {
-          gridImageLink
-          name
-        }
-      }
-    }
-
-    craftsUsing {
-      rewardItems {
-        count
-        item {
-          gridImageLink
-          name
-        }
-      }
-    }
-
-    receivedFromTasks {
-      name
-      finishRewards {
-        items {
-          item {
-            name
-          }
-          count
-        }
-      }
-    }
-
-  } 
-} 
- */
-
+    `,
+  };
+};
