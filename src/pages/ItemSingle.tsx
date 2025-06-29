@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
 import {
   Box,
   Grid,
@@ -13,17 +13,21 @@ import {
   List,
   ListItem,
   ListItemText,
+  Button,
 } from '@mui/material';
 import { useSingleItemQuery } from '../api/hooks/APICalls';
 import type { SingleItemResultType } from '../api/types/ItemSingle/responseType';
 import { Combination } from '../components/ui/Combination';
 import { ErrorOverlay } from '../components/ui/Status';
+import { useMemo } from 'react';
 
 type Params = {
   normalizeName: string;
 };
 
 export function ItemSingle() {
+  const navigate = useNavigate();
+
   const { normalizeName = '' } = useParams<Params>();
   const { data, isSuccess, isLoading, isError, error } =
     useSingleItemQuery(normalizeName);
@@ -31,20 +35,25 @@ export function ItemSingle() {
 
   // This section validates the data:
   // For crafting and barter, if there are identical items in the input and output, only one instance should be shown.
-  let craft;
-  let barter;
-  if (item !== null) {
-    const craftInputSort = item.craftInput.filter(
-      (input) => !item.craftOutput.some((output) => output.id === input.id)
-    );
-    craft = [...craftInputSort, ...item.craftOutput];
-  }
-  if (item !== null) {
-    const barterInputSort = item.barterInput.filter(
-      (input) => !item.barterOutput.some((output) => output.id === input.id)
-    );
-    barter = [...barterInputSort, ...item.barterOutput];
-  }
+
+  const craft = useMemo(() => {
+    if (item !== null) {
+      const craftInputSort = item.craftInput.filter(
+        (input) => !item.craftOutput.some((output) => output.id === input.id)
+      );
+      return [...craftInputSort, ...item.craftOutput];
+    }
+  }, [item]);
+
+  const barter = useMemo(() => {
+    if (item !== null) {
+      const barterInputSort = item.barterInput.filter(
+        (input) => !item.barterOutput.some((output) => output.id === input.id)
+      );
+      return [...barterInputSort, ...item.barterOutput];
+    }
+  }, [item]);
+
   // Helper for component rendering in ternary expressions.
   const tasks =
     item !== null && (item.taskNeed.length > 0 || item.taskGive.length > 0)
@@ -56,6 +65,16 @@ export function ItemSingle() {
       {isLoading && <CircularProgress />}
       {item && (
         <Box sx={{ p: 4 }}>
+          <Box sx={{ p: 2 }}>
+            <Button
+              sx={{ flex: 2, alignSelf: 'flex-start' }}
+              onClick={() => {
+                navigate('/');
+              }}
+            >
+              Back
+            </Button>
+          </Box>
           <Grid container>
             {/* First section - Pic, Meta Info*/}
             <Grid size={12}>
@@ -102,24 +121,32 @@ export function ItemSingle() {
                   <Grid container spacing={2}>
                     <Grid size={6}>
                       <Typography variant="body2">Last Price:</Typography>
-                      <Typography>{item.fleaPrice.lastLowPrice}₽</Typography>
+                      <Typography>
+                        {item.fleaPrice.lastLowPrice.toLocaleString()}₽
+                      </Typography>
                     </Grid>
                     <Grid size={6}>
                       <Typography variant="body2">24h Avg:</Typography>
-                      <Typography>{item.fleaPrice.avg24hPrice}₽</Typography>
+                      <Typography>
+                        {item.fleaPrice.avg24hPrice.toLocaleString()}₽
+                      </Typography>
                     </Grid>
                     <Grid size={6}>
                       <Typography variant="body2">High (24h):</Typography>
-                      <Typography>{item.fleaPrice.high24hPrice}₽</Typography>
+                      <Typography>
+                        {item.fleaPrice.high24hPrice.toLocaleString()}₽
+                      </Typography>
                     </Grid>
                     <Grid size={6}>
                       <Typography variant="body2">Low (24h):</Typography>
-                      <Typography>{item.fleaPrice.low24hPrice}₽</Typography>
+                      <Typography>
+                        {item.fleaPrice.low24hPrice.toLocaleString()}₽
+                      </Typography>
                     </Grid>
                     <Grid size={6}>
                       <Typography variant="body2">Change (48h):</Typography>
                       <Typography>
-                        {item.fleaPrice.changeLast48h} (
+                        {item.fleaPrice.changeLast48h.toLocaleString()} (
                         {item.fleaPrice.changeLast48hPercent}%)
                       </Typography>
                     </Grid>
@@ -181,7 +208,7 @@ export function ItemSingle() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    View on Wiki
+                    Wiki
                   </a>
                 </Typography>
                 <Typography
@@ -211,7 +238,11 @@ export function ItemSingle() {
                       {item.sellTo.map((entry, i) => (
                         <ListItem key={i}>
                           <ListItemText
-                            primary={`${entry.traderName}: ${entry.price} ${entry.priceCurrency}`}
+                            primary={`${
+                              entry.traderName
+                            }: ${entry.price.toLocaleString()} ${
+                              entry.priceCurrency
+                            }`}
                             secondary={
                               entry.traderName === 'Flea Market'
                                 ? `FIR: ${entry.fir ? 'Yes' : 'No'}`
@@ -232,7 +263,11 @@ export function ItemSingle() {
                         <ListItem key={i}>
                           <ListItemText
                             primary={`
-                          ${entry.playertoTraderRequirements.traderName}: ${entry.price} ${entry.priceCurrency}
+                          ${
+                            entry.playertoTraderRequirements.traderName
+                          }: ${entry.price.toLocaleString()} ${
+                              entry.priceCurrency
+                            }
                         `}
                             secondary={
                               entry.limit ||
@@ -302,12 +337,12 @@ export function ItemSingle() {
                     Tasks
                   </Typography>
 
-                  <Paper elevation={3}>
+                  <Paper>
                     {item.taskNeed.map((task, idx) => (
-                      <Paper key={idx} sx={{ p: 2 }}>
+                      <Paper key={idx} elevation={3} sx={{ p: 2 }}>
                         <Typography>{task.name}:</Typography>
-                        {task.task.map((items) => (
-                          <Typography sx={{ p: 1 }}>
+                        {task.task.map((items, idx) => (
+                          <Typography key={idx} sx={{ p: 1 }}>
                             {items.description} - {items.count} db {items.name}
                             <br />
                           </Typography>
@@ -316,12 +351,12 @@ export function ItemSingle() {
                     ))}
 
                     {item.taskGive.map((task, idx) => (
-                      <Paper key={idx} sx={{ p: 2 }}>
+                      <Paper key={idx} elevation={3} sx={{ p: 2 }}>
                         <Typography>{task.name}:</Typography>
                         {task.reward
                           .filter((filter) => filter.name === item.name)
-                          .map((items) => (
-                            <Typography sx={{ p: 1 }}>
+                          .map((items, idx) => (
+                            <Typography key={idx} sx={{ p: 1 }}>
                               Get: {items.count} db {items.name}
                               <br />
                             </Typography>

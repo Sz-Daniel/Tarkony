@@ -11,7 +11,7 @@ import {
   Tabs,
   Typography,
 } from '@mui/material';
-import { Grid, styled } from '@mui/system';
+import { Grid } from '@mui/system';
 import type { ItemDetailResultType } from '../../api/types/Items/responseType';
 import { useItemDetailQuery } from '../../api/hooks/APICalls';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
@@ -21,10 +21,6 @@ import { useState } from 'react';
 import { Skeleton } from '../ui/skeletons/Skeleton';
 import { ErrorOverlay } from '../ui/Status';
 
-export const Item = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(2),
-  textAlign: 'center',
-}));
 type Props = {
   itemId: string;
 };
@@ -40,10 +36,7 @@ const ItemDetailDisplay = ({ itemId }: Props) => {
 
   const { data, isSuccess, isLoading, isError, error } =
     useItemDetailQuery(itemId);
-  const item =
-    isSuccess && data && data.length > 0
-      ? (data[0] as ItemDetailResultType)
-      : null;
+  const item = isSuccess && data ? (data as ItemDetailResultType) : null;
 
   // This section validates the data:
   // For crafting and barter, if there are identical items in the input and output, only one instance should be shown.
@@ -65,7 +58,7 @@ const ItemDetailDisplay = ({ itemId }: Props) => {
 
   // Helper for component rendering in ternary expressions.
   const tasks = () => {
-    if (item?.taskGive.length === 0 || item?.taskNeed.length === 0) {
+    if (item?.taskGive.length === 0 && item?.taskNeed.length === 0) {
       return true;
     } else {
       return false;
@@ -123,7 +116,11 @@ const ItemDetailDisplay = ({ itemId }: Props) => {
                       {item.sellTo.map((entry, i) => (
                         <ListItem key={i}>
                           <ListItemText
-                            primary={`${entry.traderName}: ${entry.price} ${entry.priceCurrency}`}
+                            primary={`${
+                              entry.traderName
+                            }: ${entry.price?.toLocaleString()} ${
+                              entry.priceCurrency
+                            }`}
                             secondary={
                               entry.traderName === 'Flea Market'
                                 ? `FIR: ${entry.fir ? 'Yes' : 'No'}`
@@ -144,7 +141,12 @@ const ItemDetailDisplay = ({ itemId }: Props) => {
                         <ListItem key={i}>
                           <ListItemText
                             primary={`
-                                        ${entry.playertoTraderRequirements.traderName}: ${entry.price} ${entry.priceCurrency}
+                                        ${
+                                          entry.playertoTraderRequirements
+                                            .traderName
+                                        }: ${entry.price?.toLocaleString()} ${
+                              entry.priceCurrency
+                            }
                                         `}
                             secondary={
                               entry.limit ||
@@ -233,8 +235,8 @@ const ItemDetailDisplay = ({ itemId }: Props) => {
                       <Typography>{task.name}:</Typography>
                       {task.reward
                         .filter((filter) => filter.name === item.name)
-                        .map((items) => (
-                          <Typography sx={{ p: 1 }}>
+                        .map((items, idx) => (
+                          <Typography key={idx} sx={{ p: 1 }}>
                             Get: {items.count} db {items.name}
                             <br />
                           </Typography>

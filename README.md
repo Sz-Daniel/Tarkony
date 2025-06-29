@@ -1,6 +1,6 @@
-# Tarkony - 2025.06.22
+# Tarkony - 2025.06.26
 
-### Guide
+## Guide
 
 On the main page, all on-hand items are listed first.
 
@@ -9,6 +9,12 @@ Displayed categories are top-level categories; by selecting them, the user is ta
 Each item has a dropdown data field that displays additional necessary information. ~~and when hovering over these data points, related items are also shown — for example, what the given item can be bartered for~~ By tabs the usre can choose which type of information want to see
 
 In the detailed data section, there's an All Data button that redirects the user to the selected item's separate page, where all of its data is accessible.
+
+## Tasks
+
+## High Prior Issue:
+
+There are some problems with the API data source. For now, I still have the data, but I cannot open the documentation and playground to identify the source of the problem without it.
 
 ### Done:
 
@@ -22,17 +28,30 @@ In the detailed data section, there's an All Data button that redirects the user
 
 Checkpoint! - The basic functions work well, the data is clear, and I applied every necessary tool, even if only minimally.
 
+- price x.xxx.xxx format in render
+- Date format at crafting
+- Barter / craft - per item secondary - secondary same as Trader FIR
+- Accordion close problem fixed
+- Page 1. after every selected category
+- filteredItems => useMemo
+- Worth page started and planning
+
 ### Next:
+
+### Misc
+
+### Major
 
 - IsItWorth? Bartel vs Craft Vs Trader Page
 - Modder compare Page
-- ItemSingle as pop-up as separeted window in ItemList
+- ItemSingle as pop-up as separeted window in ItemList -> Barter / Craft deal able to pop-up with a button click.
 - (In the end) Whole UI refactor
 
 ### Still not figured out:
 
-- "Colt M4A1 5.56x45 assault rifle" - name problem: itemDetailsQuery without "name" works fine,
-  with name this item have a problem
+- "Colt M4A1 5.56x45 assault rifle" - and other name problem: itemDetailsQuery without "name" works fine - Adapter problem,
+  with name this item have a problem "Golden neck chain", "Rubel"
+  Part of the name is same with other ?
 
 ## Overview
 
@@ -125,6 +144,14 @@ Tarkony
 
 This module manages GraphQL request logic using Axios, integrating with useQuery to fetch pre-defined queries via custom hooks.
 In progress: developing a standalone asynchronous fetch function (fetchQuery), not tied to React hooks.
+
+Alternative for next big refactor: Every price should be shown in x.xxx.xxx format, easily done with .toLocaleString().
+Currently, I call them like this, but next time I would structure it as:
+`price:{
+    value:price,
+    valueString:price.toLocaleString(),
+}`
+This way, it won’t be necessary to repeatedly call a function just to display a properly formatted price.
 
 ### `APICalls.ts`
 

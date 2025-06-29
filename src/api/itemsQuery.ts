@@ -55,10 +55,10 @@ export const itemBaseQuery = {
 export const itemDetailsQuery = (id: string = ''): QueryType => {
   return {
     name: `itemDetails-${id}`,
-    key: 'items',
+    key: 'item',
     query: `   
     query {
-      items(ids: "${id}") {
+      item(id: "${id}") {
         id
         name
         normalizedName

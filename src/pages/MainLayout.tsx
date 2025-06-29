@@ -10,7 +10,7 @@ export function MainLayout() {
     palette: {
       mode: 'light',
       background: {
-        default: '#ffffff', // világos háttér
+        default: '#ffffff',
       },
     },
   });
@@ -19,7 +19,7 @@ export function MainLayout() {
     palette: {
       mode: 'dark',
       background: {
-        default: '#121212', // sötét háttér
+        default: '#121212',
       },
     },
   });

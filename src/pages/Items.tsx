@@ -26,8 +26,12 @@ export function Items() {
         />
       )}
 
-      {categoryFetch.isLoading && <Skeleton component="CategoryChip" />}
-      {itemBaseFetch.isLoading && <Skeleton component="ItemBaseList" />}
+      {categoryFetch.isLoading && categoryFetch.isLoading && (
+        <>
+          <Skeleton component="CategoryChip" />
+          <Skeleton component="ItemBaseList" />
+        </>
+      )}
 
       {categoryFetch.isError && (
         <ErrorOverlay message={categoryFetch.error.message} />

@@ -4,11 +4,11 @@ import type { QueryType } from './types/Items/queryType';
 
 const STALE_TIME_WEEKLY = 1000 * 60 * 60 * 24 * 7;
 
-/** useFetchIntoCache
+/** Using useQuery with async fetchGraphQLwQuery
  * @param query Object containing:
- * name: cache key name
- * key: query key (described in return)
- * query: the GraphQL query string
+ * name: cache key name,
+ * key: query key (described in return),
+ * query: the GraphQL query string,
  * @param adapter Optional function to format the query response data into a usable structure
  * @returns The data corresponding to the query key, filtered to return only the array; optionally reformats the data structure via the adapter for easier use
  */
@@ -24,6 +24,7 @@ export function useFetchIntoCache<TQuery, TAdapter = TQuery>(
       const raw = await fetchGraphQLwQuery(query.query);
       console.log('Raw: ' + query.name + ' useFetchIntoCache', raw);
       const useableField = raw.data[query.key] as TQuery;
+      console.log('useableField', useableField);
       const result = adapter ? adapter(useableField) : useableField;
       console.log('Result: ' + query.name + ' useFetchIntoCache', result);
       return result;

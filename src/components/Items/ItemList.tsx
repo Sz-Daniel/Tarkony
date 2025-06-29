@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useQueryClient } from '@tanstack/react-query';
-import { memo, useEffect, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { itemBaseQuery } from '../../api/itemsQuery';
 import { ItemDetailDisplay } from './ItemDetail';
 import { SearchBar } from '../ui/SeachBar';
@@ -40,25 +40,28 @@ export function ItemList({
     queryClient.getQueryData([itemBaseQuery.name]) ?? [];
 
   // Filters the displayed item list by category and searchedName
-  useEffect(() => {
-    const categoryFiltered = itemBaseListCache.filter((item) =>
-      selectedCategory.includes(item.category)
-    );
-
-    const finalFiltered = !searchedName
-      ? categoryFiltered
-      : categoryFiltered.filter((item) =>
-          item.name.toLowerCase().includes(searchedName.toLowerCase())
-        );
-
-    setShowItem(finalFiltered);
+  const filteredItems = useMemo(() => {
+    let list = itemBaseListCache;
+    if (selectedCategory.length) {
+      list = list.filter((item) => selectedCategory.includes(item.category));
+    }
+    if (searchedName) {
+      const lower = searchedName.toLowerCase();
+      list = list.filter((item) => item.name.toLowerCase().includes(lower));
+    }
+    return list;
   }, [itemBaseListCache, selectedCategory, searchedName]);
+
+  useEffect(() => {
+    setShowItem(filteredItems);
+    setPage(1);
+  }, [filteredItems]);
 
   //Accordion
   const accordionHandleChange =
-    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+    (panel: string) => (_: React.SyntheticEvent, isExpanded: boolean) => {
       setExpanded(isExpanded ? panel : false);
-      setSelectedItem(panel);
+      setSelectedItem(isExpanded ? panel : ''); // csak nyitáskor állítjuk be
     };
 
   //Pageinated
@@ -71,19 +74,12 @@ export function ItemList({
     page * itemsPerPage
   );
 
-  //MUI
-  const Item = styled(Box)(({ theme }) => ({
-    padding: theme.spacing(2),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-  }));
-
   return (
     <>
       <Box sx={{ padding: 4 }}>
         <SearchBar setSearchedName={setSearchedName} />
       </Box>
-      {paginatedItems.map((item: any) => (
+      {paginatedItems.map((item: ItemBaseResultType) => (
         <Accordion
           key={item.id}
           expanded={selectedItem === item.id}
@@ -98,7 +94,7 @@ export function ItemList({
       ))}
 
       <Pagination
-        count={Math.ceil(showItem.length / itemsPerPage)}
+        count={Math.max(1, Math.ceil(showItem.length / itemsPerPage))}
         page={page}
         onChange={paginationHandleChange}
         sx={{ mt: 2 }}
@@ -135,6 +131,7 @@ const ItemBaseDisplay = memo(({ item }: ItemBaseDisplayProps) => {
           },
         }}
       >
+        {/* ICON */}
         <Box sx={{ flex: 1, alignSelf: 'flex-start' }}>
           <Item>
             <img
@@ -146,24 +143,26 @@ const ItemBaseDisplay = memo(({ item }: ItemBaseDisplayProps) => {
           </Item>
         </Box>
 
+        {/* NAME */}
         <Box sx={{ flex: 2 }}>
           <Item>
             <Typography variant="body1">{item.name}</Typography>
           </Item>
         </Box>
 
+        {/* BEST SELLER PRICE*/}
         <Box sx={{ flex: 1, alignSelf: 'flex-end' }}>
           <Stack spacing={0}>
             <Item>Sell to: {item.bestSeller.place} </Item>
             <Item>
-              {item.bestSeller.price}
+              {item.bestSeller.price?.toLocaleString()}
               {'Flea Market' === item.bestSeller.place ? (
                 <Typography
                   component="span"
                   color={item.changePercent > 0 ? 'red' : 'green'}
                 >
                   <sup>
-                    {item.changePercent}% {item.changePrice}
+                    {item.changePercent}% {item.changePrice.toLocaleString()}
                   </sup>
                 </Typography>
               ) : (

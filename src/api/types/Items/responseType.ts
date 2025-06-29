@@ -1,5 +1,5 @@
 export type ItemBaseResultType = {
-  id: string | null;
+  id: string;
   name: string;
   iconURL: string;
   bestSeller: PriceDeal;
