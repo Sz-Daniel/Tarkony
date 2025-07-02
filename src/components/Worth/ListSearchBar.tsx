@@ -7,9 +7,9 @@ import {
   ListItemText,
   TextField,
 } from '@mui/material';
-import { useFetchIntoCache } from '../../api/graphQLClient';
+import { useFetchIntoCache } from '../../api/apiClient';
 import type { WorthNameListQueryType } from '../../api/types/Worth/queryType';
-import { worthNameListQuery } from '../../api/worthQuery';
+import { worthNameListQuery } from '../../api/queries/worthQuery';
 import { ErrorOverlay } from '../ui/Status';
 import { useMemo, useState } from 'react';
 
@@ -17,7 +17,8 @@ type Props = {
   setSelectedItem: React.Dispatch<React.SetStateAction<string>>;
 };
 
-export function ListSearchBar({ setSelectedItem }: Props) {
+export function ListSearchBar(props: Props) {
+  const { setSelectedItem } = props;
   const [searched, setSearched] = useState('');
 
   const { data, isError, error, isSuccess, isLoading } =

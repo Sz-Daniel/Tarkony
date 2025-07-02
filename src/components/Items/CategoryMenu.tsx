@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { categoriesQuery } from '../../api/itemsQuery';
+import { categoriesQuery } from '../../api/queries/itemsQuery';
 import { useEffect, useState } from 'react';
 import { Chip } from '@mui/material';
 import type { CategoryType } from '../../api/types/Items/queryType';

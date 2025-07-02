@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import { Footer } from '../components/layout/Footer';
+import { Footer } from './Footer';
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import { useState } from 'react';
 

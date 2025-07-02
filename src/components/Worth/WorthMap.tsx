@@ -1,10 +1,10 @@
 import { Box, Chip, CircularProgress, Paper, Typography } from '@mui/material';
-import { useFetchIntoCache } from '../../api/graphQLClient';
+import { useFetchIntoCache } from '../../api/apiClient';
 import { ErrorOverlay } from '../ui/Status';
 import { useEffect, useMemo, useState } from 'react';
 import { SwitchOption } from './SwitchOption';
 import type { WorthItemMetaQueryType } from '../../api/types/Worth/queryType';
-import { worthItemMetaQuery } from '../../api/worthQuery';
+import { worthItemMetaQuery } from '../../api/queries/worthQuery';
 import { Combination } from './Combination';
 
 type Props = {

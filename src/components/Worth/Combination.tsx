@@ -7,7 +7,7 @@ import type {
 import { CountedItem } from './CountedItem';
 import { useQueryClient } from '@tanstack/react-query';
 import type { ItemBaseResultType } from '../../api/types/Items/responseType';
-import { itemBaseQuery } from '../../api/itemsQuery';
+import { itemBaseQuery } from '../../api/queries/itemsQuery';
 
 /**
  * Utilizes type discrimination to create a template compatible with both types.

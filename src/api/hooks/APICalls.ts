@@ -1,12 +1,12 @@
 import { itemBaseAdapter, itemDetailsAdapter } from '../adapters/itemsAdapter';
 import { singleItemAdapter } from '../adapters/itemSingleAdapter';
-import { useFetchIntoCache } from '../graphQLClient';
-import { singleItemQuery } from '../itemSingleQuery';
+import { useFetchIntoCache } from '../apiClient';
+import { singleItemQuery } from '../queries/itemSingleQuery';
 import {
   categoriesQuery,
   itemBaseQuery,
   itemDetailsQuery,
-} from '../itemsQuery';
+} from '../queries/itemsQuery';
 import type {
   CategoryType,
   ItemBaseQueryType,

@@ -2,6 +2,8 @@
 
 ## Guide
 
+The website related to the Escape from Tarkov game aims to provide quick and easily accessible information about in-game items. This includes, for example, current selling prices, as well as concise key data such as prices from other traders and the role of items in barter crafting or quests. In the future, I plan to enable users to assess whether it is worthwhile to invest in a particular item based on additional crafting or barter connections. Additionally, a separate module will be available to compare the values and performance of weapon mods.
+
 On the main page, all on-hand items are listed first.
 
 Displayed categories are top-level categories; by selecting them, the user is taken to the subcategories. For each selected category, all items within its subcategories are also displayed.
@@ -18,31 +20,17 @@ There are some problems with the API data source. For now, I still have the data
 
 ### Done:
 
-- Started to use React.memo for ItemBaseDisplay and tried to optimize the page
-- Skeleton on isLoading (first iteration)
-- Logger taken out, it started rendering while other component rendered so it was a big problem. Using console.log now
-- Error status component in case of fetching isError
-- Combination with prices in Combination componenet
-- Item Single page Quests & ItemDetails
-- Dark / Light themes
-
-Checkpoint! - The basic functions work well, the data is clear, and I applied every necessary tool, even if only minimally.
-
-- price x.xxx.xxx format in render
-- Date format at crafting
-- Barter / craft - per item secondary - secondary same as Trader FIR
-- Accordion close problem fixed
-- Page 1. after every selected category
-- filteredItems => useMemo
-- Worth page started and planning
+- Component organization, branch it separately so this approach remains reviewable.
 
 ### Next:
+
+- Full OOP and SOLID-based refactor on the main branch - Details below in the `Junior Journal - Planned OOP-Based Structure` section
 
 ### Misc
 
 ### Major
 
-- IsItWorth? Bartel vs Craft Vs Trader Page
+- Worth page(in progress).
 - Modder compare Page
 - ItemSingle as pop-up as separeted window in ItemList -> Barter / Craft deal able to pop-up with a button click.
 - (In the end) Whole UI refactor
@@ -93,6 +81,10 @@ Tarkony
 │   │   ├── hooks/
 │   │   │   └── APICalls.ts
 │   │   ├── old/
+│   │   ├── queries/
+│   │   │   ├── itemSingleQuery.ts
+│   │   │   ├── itemsQuery.ts
+│   │   │   └── worthQuery.ts
 │   │   ├── types/
 │   │   │   ├── ItemSingle/
 │   │   │   │   ├── queryTyoe.ts
@@ -100,9 +92,7 @@ Tarkony
 │   │   │   └── items/
 │   │   │       ├── queryTyoe.ts
 │   │   │       └── responseType.ts
-│   │   ├── graphQLClient.ts
-│   │   ├── itemSingleQuery.ts
-│   │   └── itemsQuery.ts
+│   │   └── apiClient.ts
 │   ├── components/
 │   │   ├── Items/
 │   │   │   ├── categoryLogic.ts
@@ -110,6 +100,7 @@ Tarkony
 │   │   │   ├── ItemDetails.tsx
 │   │   │   └── ItemList.tsx
 │   │   ├── layout/
+│   │   │   ├── Layout.tsx
 │   │   │   └── Footer.tsx
 │   │   └── ui/
 │   │       ├── skeletons
@@ -123,13 +114,17 @@ Tarkony
 │   │       └── SearchBar.tsx
 │   ├── pages/
 │   │   ├── Items.tsx
-│   │   ├── MainLayout.tsx
 │   │   └── ItemSingle.tsx
 │   ├── main.tsx
 │   └── App.tsx
 ├── index.html
 └── README.md
 ```
+
+## More Detailed Explanations from a UX Perspective
+
+There are (and will be) a lot of features intentionally accessible in multiple ways throughout the site. This is not the result of a flawed UI/UX design concept, but rather a deliberate decision for practice purposes. The goal is to experiment with different display approaches—how to create them, how to manage them.
+For example, this includes both a single-page application (SPA) structure and in-page popup components that can be closed or moved around by clicking and dragging.
 
 ## Key Modules
 
@@ -152,6 +147,8 @@ Currently, I call them like this, but next time I would structure it as:
     valueString:price.toLocaleString(),
 }`
 This way, it won’t be necessary to repeatedly call a function just to display a properly formatted price.
+
+I’m fully aware that GraphQL is not the most commonly used API handling method in all contexts, but the current API data source I’m working with uses it. I also plan to create an alternative REST API query, purely as a mockup—it won’t actually function.
 
 ### `APICalls.ts`
 
@@ -233,9 +230,13 @@ I removed this module since I switched to a clearer tab view, but I kept it beca
 
 ---
 
-## Junior Journal - 2025.06.22
+## Junior Journal
 
 Right from the start, I want to emphasize an important experience. As a junior, I considered it important to thoroughly understand how LLM works. At first, I used ChatGPT to get familiar and experiment with how I can use it as an aid. However, it has been a major hindrance so far. Gradually, I reduced its usage and only wanted to use it as guidance. Often, I deliberately did not set it aside, but I encountered many problems and lost a lot of time because of it. I did gain experience though, and the final result was always the same: among its suggestions were some functions that were indeed good to see, but when I wrote them myself, the code was much shorter and worked more efficiently - the best example: Category (see below: Categorical problems).
+
+### Planned OOP-Based Structure
+
+Based on the resources I have studied — including the official React documentation - it is clear that React primarily favors a functional and declarative approach. Accordingly, the older class-based component model has been gradually replaced by hook-based logic. However, throughout various development expectations and industry practices, I have frequently encountered a demand for object-oriented (OOP) design principles. I have decided to refactor the project into an OOP-based structure, with particular attention to adhering to the SOLID principles. The functional version will be preserved in a separate branch in a stable state.
 
 ### Reflections on fetching implementation
 

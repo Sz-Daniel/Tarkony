@@ -10,7 +10,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useQueryClient } from '@tanstack/react-query';
 import { memo, useEffect, useMemo, useState } from 'react';
-import { itemBaseQuery } from '../../api/itemsQuery';
+import { itemBaseQuery } from '../../api/queries/itemsQuery';
 import { ItemDetailDisplay } from './ItemDetail';
 import { SearchBar } from '../ui/SeachBar';
 import type { ItemBaseResultType } from '../../api/types/Items/responseType';
