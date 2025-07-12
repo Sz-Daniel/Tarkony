@@ -48,195 +48,226 @@ export const singleItemQuery = (normalizedName: string = ''): QueryType => {
         updated
 
         sellFor {
-            currency
-            price
-            priceRUB
-            vendor {
-                name
-                ... on FleaMarket {
-                foundInRaidRequired
-                }
-            }
+          currency
+          price
+          priceRUB
+          vendor {
+          name
+          ... on FleaMarket {
+            foundInRaidRequired
+          }
         }
-        buyFor {
-            currency
-            price
-            priceRUB
-            vendor {
-            ... on TraderOffer {
-                    minTraderLevel
-                    buyLimit
-                    name
-                    trader {
-                        levels {
-                        level
-                        requiredPlayerLevel
-                        requiredReputation
-                        requiredCommerce
-                        }
-                    }
-                    taskUnlock {
-                        name
-                        minPlayerLevel
-                    }
-                }
-            }
-        }
-        bartersUsing {
-            id
-            level
-            buyLimit
-            taskUnlock {
-                name
-                minPlayerLevel
-            }
-            trader {
-                name
-                imageLink
-                levels {
-                    level
-                    requiredPlayerLevel
-                    requiredReputation
-                    requiredCommerce
-                }
-            }
-            rewardItems {
-                count
-                item {
-                id
-                gridImageLink
-                name
-                }
-            }
-            requiredItems {
-                count
-                item {
-                id
-                gridImageLink
-                name
-                }
-            }
-        }
-        bartersFor {
-            id
-            level
-            buyLimit
-            taskUnlock {
-                name
-                minPlayerLevel
-            }
-            trader {
-                name
-                imageLink
-                levels {
-                    level
-                    requiredPlayerLevel
-                    requiredReputation
-                    requiredCommerce
-                }
-            }
-            rewardItems {
-                count
-                item {
-                    id
-                    gridImageLink
-                    name
-                }
-            }
-            requiredItems {
-                count
-                item {
-                    id
-                    gridImageLink
-                    name
-                }
-            }
-        }
-        craftsUsing {
-            id
-            duration
-            level
-            station {
-                name
-                imageLink
-            }
-            taskUnlock {
-                name
-                minPlayerLevel
-            }
-            rewardItems {
-                count
-                item {
-                    id
-                    gridImageLink
-                    name
-                }
-            }
-            requiredItems {
-                count
-                item {
-                    id
-                    gridImageLink
-                    name
-                }
-            }
-        }  
+      }
 
-        craftsFor {
-            id
-            duration
-            level
-            station {
-                name
-                imageLink
+      buyFor {
+        currency
+        price
+        priceRUB
+        vendor {
+          ... on TraderOffer {
+            minTraderLevel
+            buyLimit
+            trader {
+              name
+              imageLink
+              levels {
+                level
+                requiredPlayerLevel
+                requiredReputation
+                requiredCommerce
+              }
             }
             taskUnlock {
-                name
-                minPlayerLevel
+              name
+              minPlayerLevel
             }
-            rewardItems {
-                count
-                item {
-                    id
-                    gridImageLink
-                    name
-                }
-            }
-            requiredItems {
-                count
-                item {
-                    id
-                    gridImageLink
-                    name
-                }
-            }
+          }
         }
+      }
 
-        usedInTasks {
-            name
-            objectives {
-                ... on TaskObjectiveItem {
-                    description
-                    count
-                    item {
-                        name
-                    }
-                }
-            }
+      bartersUsing {
+        id
+        level
+        buyLimit
+        taskUnlock {
+          name
+          minPlayerLevel
         }
-        receivedFromTasks {
-            name
-            finishRewards {
-                items {
-                    count
-                    item {
-                        name
-                    }
-                }
-            }
+        trader {
+          name
+          imageLink
+          levels {
+            level
+            requiredPlayerLevel
+            requiredReputation
+            requiredCommerce
+          }
         }
+        rewardItems {
+          count
+          item {
+            id
+            gridImageLink
+            name
+          }
+        }
+        requiredItems {
+          count
+          item {
+            id
+            gridImageLink
+            name
+          }
+        }
+      }  
+
+      bartersFor {
+        id
+        level
+        buyLimit
+        taskUnlock {
+          name
+          minPlayerLevel
+        }
+        trader {
+          name
+          imageLink
+          levels {
+            level
+            requiredPlayerLevel
+            requiredReputation
+            requiredCommerce
+          }
+        }
+        rewardItems {
+          count
+          item {
+            id
+            gridImageLink
+            name
+          }
+        }
+        requiredItems {
+          count
+          item {
+            id
+            gridImageLink
+            name
+          }
+        }
+      } 
+
+      craftsUsing {
+        id
+        duration
+        level
+        station {
+          name
+          imageLink
+        }
+        taskUnlock {
+          name
+          minPlayerLevel
+        }
+        rewardItems {
+          count
+          item {
+            id
+            gridImageLink
+            name
+          }
+        }
+        requiredItems {
+          count
+          item {
+            id
+            gridImageLink
+            name
+          }
+        }
+      }  
+
+      craftsFor {
+        id
+        duration
+        level
+        station {
+          name
+          imageLink
+        }
+        taskUnlock {
+          name
+          minPlayerLevel
+        }
+        rewardItems {
+          count
+          item {
+            id
+            gridImageLink
+            name
+          }
+        }
+        requiredItems {
+          count
+          item {
+            id
+            gridImageLink
+            name
+          }
+        }
+      }
+
+      usedInTasks {
+        name
+        objectives {
+          ... on TaskObjectiveItem {
+            description
+            count
+            item {
+              name
+            }
+          }
+        }
+      }
+      receivedFromTasks {
+        name
+        finishRewards {
+          items {
+            count
+            item {
+              name
+            }
+          }
+        }
+      }
     }
 }
+    `,
+  };
+};
+
+export const singleItemPricesQuery = (id: string = ''): QueryType => {
+  return {
+    name: `singleItemPricesQuery-${id}`,
+    key: 'item',
+    query: `  
+    query {
+        item(id: "${id}") {
+          id
+          sellFor{ 
+            priceRUB
+            vendor{
+              name
+            }
+          }
+          buyFor {
+            priceRUB
+            vendor {
+              name
+            }
+          }
+        }
+    }
     `,
   };
 };

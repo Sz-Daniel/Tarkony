@@ -16,10 +16,16 @@ import {
   Button,
 } from '@mui/material';
 import { useSingleItemQuery } from '../api/hooks/APICalls';
-import type { SingleItemResultType } from '../api/types/ItemSingle/responseType';
+import type {
+  FleaPrice,
+  SingleItemResultType,
+  Stats,
+} from '../api/types/ItemSingle/responseType';
 import { Combination } from '../components/ui/Combination';
 import { ErrorOverlay } from '../components/ui/Status';
 import { useMemo } from 'react';
+import { useTabsLogic } from '../components/Items/Tabs';
+import { Skeleton } from '../components/ui/skeletons/Skeleton';
 
 type Params = {
   normalizeName: string;
@@ -35,34 +41,24 @@ export function ItemSingle() {
 
   // This section validates the data:
   // For crafting and barter, if there are identical items in the input and output, only one instance should be shown.
+  {
+    isError && <ErrorOverlay message={error.message} />;
+  }
+  {
+    isLoading && <Skeleton component="ItemDetail" />;
+  }
 
-  const craft = useMemo(() => {
-    if (item !== null) {
-      const craftInputSort = item.craftInput.filter(
-        (input) => !item.craftOutput.some((output) => output.id === input.id)
-      );
-      return [...craftInputSort, ...item.craftOutput];
-    }
-  }, [item]);
+  const { craft, barter, tasks } = useTabsLogic({
+    craftInput: item?.craftInput ?? [],
+    craftOutput: item?.craftOutput ?? [],
+    barterInput: item?.barterInput ?? [],
+    barterOutput: item?.barterOutput ?? [],
+    taskNeed: item?.taskNeed ?? [],
+    taskGive: item?.taskGive ?? [],
+  });
 
-  const barter = useMemo(() => {
-    if (item !== null) {
-      const barterInputSort = item.barterInput.filter(
-        (input) => !item.barterOutput.some((output) => output.id === input.id)
-      );
-      return [...barterInputSort, ...item.barterOutput];
-    }
-  }, [item]);
-
-  // Helper for component rendering in ternary expressions.
-  const tasks =
-    item !== null && (item.taskNeed.length > 0 || item.taskGive.length > 0)
-      ? true
-      : false;
   return (
     <>
-      {isError && <ErrorOverlay message={error.message} />}
-      {isLoading && <CircularProgress />}
       {item && (
         <Box sx={{ p: 4 }}>
           <Box sx={{ p: 2 }}>
@@ -112,87 +108,10 @@ export function ItemSingle() {
             </Grid>
 
             {/* Flea info*/}
-            {item.fleaPrice && (
-              <Grid size={12}>
-                <Paper elevation={3} sx={{ p: 2 }}>
-                  <Typography variant="h6" gutterBottom>
-                    Market Stats
-                  </Typography>
-                  <Grid container spacing={2}>
-                    <Grid size={6}>
-                      <Typography variant="body2">Last Price:</Typography>
-                      <Typography>
-                        {item.fleaPrice.lastLowPrice.toLocaleString()}₽
-                      </Typography>
-                    </Grid>
-                    <Grid size={6}>
-                      <Typography variant="body2">24h Avg:</Typography>
-                      <Typography>
-                        {item.fleaPrice.avg24hPrice.toLocaleString()}₽
-                      </Typography>
-                    </Grid>
-                    <Grid size={6}>
-                      <Typography variant="body2">High (24h):</Typography>
-                      <Typography>
-                        {item.fleaPrice.high24hPrice.toLocaleString()}₽
-                      </Typography>
-                    </Grid>
-                    <Grid size={6}>
-                      <Typography variant="body2">Low (24h):</Typography>
-                      <Typography>
-                        {item.fleaPrice.low24hPrice.toLocaleString()}₽
-                      </Typography>
-                    </Grid>
-                    <Grid size={6}>
-                      <Typography variant="body2">Change (48h):</Typography>
-                      <Typography>
-                        {item.fleaPrice.changeLast48h.toLocaleString()} (
-                        {item.fleaPrice.changeLast48hPercent}%)
-                      </Typography>
-                    </Grid>
-                    <Grid size={6}>
-                      <Typography variant="body2">Offers:</Typography>
-                      <Typography>{item.fleaPrice.lastOfferCount}</Typography>
-                    </Grid>
-                  </Grid>
-                </Paper>
-              </Grid>
-            )}
+            {item.fleaPrice && <FleaInfoComponent flea={item.fleaPrice} />}
 
             {/* Item stats */}
-            {item.stats && (
-              <Grid size={12}>
-                <Paper elevation={3} sx={{ p: 2 }}>
-                  <Typography variant="h6" gutterBottom>
-                    Item Stats
-                  </Typography>
-                  <Table size="small">
-                    <TableBody>
-                      <TableRow>
-                        <TableCell>Velocity</TableCell>
-                        <TableCell>{item.stats.velocity}</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell>Recoil Modifier</TableCell>
-                        <TableCell>{item.stats.recoilModifier}</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell>Loudness</TableCell>
-                        <TableCell>{item.stats.loudness}</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell>Accuracy Modifier</TableCell>
-                        <TableCell>{item.stats.accuracyModifier}</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell>Ergonomics Modifier</TableCell>
-                        <TableCell>{item.stats.ergonomicsModifier}</TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                </Paper>
-              </Grid>
-            )}
+            {item.stats && <StatsComponent stats={item.stats} />}
 
             {/* Description */}
             <Grid size={12}>
@@ -299,14 +218,31 @@ export function ItemSingle() {
             {/* Crafting section */}
             {craft && craft.length !== 0 && (
               <Grid size={12}>
-                <Paper>
+                <Paper elevation={3}>
                   <Typography variant="h6" gutterBottom>
                     Crafting
                   </Typography>
 
-                  {craft.map((craft, i) => (
-                    <Combination key={i} props={{ ...craft, kind: 'Craft' }} />
-                  ))}
+                  {craft !== null &&
+                    craft
+                      .filter(
+                        (c) =>
+                          c.stationRequirement !== null &&
+                          c.questRequirement !== null
+                      )
+                      .map((craft, i) => {
+                        return (
+                          <Combination
+                            key={i}
+                            props={{
+                              ...craft,
+                              kind: 'Craft',
+                              stationRequirement: craft.stationRequirement!,
+                              questRequirement: craft.questRequirement!,
+                            }}
+                          />
+                        );
+                      })}
                 </Paper>
               </Grid>
             )}
@@ -314,17 +250,22 @@ export function ItemSingle() {
             {/* Barter section */}
             {barter && barter.length !== 0 && (
               <Grid size={12}>
-                <Paper>
+                <Paper elevation={3}>
                   <Typography variant="h6" gutterBottom>
                     Barter
                   </Typography>
 
-                  {barter.map((barter, i) => (
-                    <Combination
-                      key={i}
-                      props={{ ...barter, kind: 'Barter' }}
-                    />
-                  ))}
+                  {barter &&
+                    barter.map((barter, i) => (
+                      <Combination
+                        key={i}
+                        props={{
+                          ...barter,
+                          kind: 'Barter',
+                          questRequirement: barter.questRequirement!,
+                        }}
+                      />
+                    ))}
                 </Paper>
               </Grid>
             )}
@@ -332,38 +273,36 @@ export function ItemSingle() {
             {/* Quest section */}
             {tasks && (
               <Grid size={12}>
-                <Paper>
+                <Paper elevation={3}>
                   <Typography variant="h6" gutterBottom>
                     Tasks
                   </Typography>
 
-                  <Paper>
-                    {item.taskNeed.map((task, idx) => (
-                      <Paper key={idx} elevation={3} sx={{ p: 2 }}>
-                        <Typography>{task.name}:</Typography>
-                        {task.task.map((items, idx) => (
+                  {item.taskNeed?.map((task, idx) => (
+                    <Paper key={idx} sx={{ p: 2 }} elevation={3}>
+                      <Typography>{task.name}:</Typography>
+                      {task.task &&
+                        task.task.map((items, idx) => (
                           <Typography key={idx} sx={{ p: 1 }}>
                             {items.description} - {items.count} db {items.name}
                             <br />
                           </Typography>
                         ))}
-                      </Paper>
-                    ))}
+                    </Paper>
+                  ))}
 
-                    {item.taskGive.map((task, idx) => (
-                      <Paper key={idx} elevation={3} sx={{ p: 2 }}>
-                        <Typography>{task.name}:</Typography>
-                        {task.reward
-                          .filter((filter) => filter.name === item.name)
-                          .map((items, idx) => (
-                            <Typography key={idx} sx={{ p: 1 }}>
-                              Get: {items.count} db {items.name}
-                              <br />
-                            </Typography>
-                          ))}
-                      </Paper>
-                    ))}
-                  </Paper>
+                  {item.taskGive?.map((task, idx) => (
+                    <Paper key={idx} sx={{ p: 2 }} elevation={3}>
+                      <Typography>{task.name}:</Typography>
+                      {task.reward &&
+                        task.reward.map((items, idx) => (
+                          <Typography key={idx} sx={{ p: 1 }}>
+                            Get: {items.count} db {items.name}
+                            <br />
+                          </Typography>
+                        ))}
+                    </Paper>
+                  ))}
                 </Paper>
               </Grid>
             )}
@@ -373,3 +312,113 @@ export function ItemSingle() {
     </>
   );
 }
+type FleaInfoComponentProps = {
+  flea: FleaPrice;
+};
+const FleaInfoComponent = ({ flea }: FleaInfoComponentProps) => {
+  return (
+    <Grid size={12}>
+      <Paper elevation={3} sx={{ p: 2 }}>
+        <Typography variant="h6" gutterBottom>
+          Market Stats
+        </Typography>
+
+        <Grid container spacing={2}>
+          {!!flea.lastLowPrice && (
+            <Grid size={6}>
+              <Typography variant="body2">Last Price:</Typography>
+              <Typography>{flea.lastLowPrice.toLocaleString()}₽</Typography>
+            </Grid>
+          )}
+
+          {!!flea.avg24hPrice && (
+            <Grid size={6}>
+              <Typography variant="body2">24h Avg:</Typography>
+              <Typography>{flea.avg24hPrice.toLocaleString()}₽</Typography>
+            </Grid>
+          )}
+
+          {!!flea.high24hPrice && (
+            <Grid size={6}>
+              <Typography variant="body2">High (24h):</Typography>
+              <Typography>{flea.high24hPrice.toLocaleString()}₽</Typography>
+            </Grid>
+          )}
+
+          {!!flea.low24hPrice && (
+            <Grid size={6}>
+              <Typography variant="body2">Low (24h):</Typography>
+              <Typography>{flea.low24hPrice.toLocaleString()}₽</Typography>
+            </Grid>
+          )}
+
+          {!!flea.changeLast48h && flea.changeLast48h > 0 && (
+            <Grid size={6}>
+              <Typography variant="body2">Change (48h):</Typography>
+              <Typography>
+                {flea.changeLast48h.toLocaleString()} (
+                {flea.changeLast48hPercent}%)
+              </Typography>
+            </Grid>
+          )}
+
+          {!!flea.lastOfferCount && (
+            <Grid size={6}>
+              <Typography variant="body2">Offers:</Typography>
+              <Typography>{flea.lastOfferCount}</Typography>
+            </Grid>
+          )}
+        </Grid>
+      </Paper>
+    </Grid>
+  );
+};
+
+type StatsComponentProps = {
+  stats: Stats;
+};
+const StatsComponent = ({ stats }: StatsComponentProps) => {
+  return (
+    <Grid size={12}>
+      <Paper elevation={3} sx={{ p: 2 }}>
+        <Typography variant="h6" gutterBottom>
+          Item Stats
+        </Typography>
+        <Table size="small">
+          <TableBody>
+            {!!stats.velocity && stats.velocity > 0 && (
+              <TableRow>
+                <TableCell>Velocity</TableCell>
+                <TableCell>{stats.velocity}</TableCell>
+              </TableRow>
+            )}
+            {!!stats.recoilModifier && stats.recoilModifier > 0 && (
+              <TableRow>
+                <TableCell>Recoil Modifier</TableCell>
+                <TableCell>{stats.recoilModifier}</TableCell>
+              </TableRow>
+            )}
+            {!!stats.loudness && stats.loudness > 0 && (
+              <TableRow>
+                <TableCell>Loudness</TableCell>
+                <TableCell>{stats.loudness}</TableCell>
+              </TableRow>
+            )}
+            {!!stats.accuracyModifier && stats.accuracyModifier > 0 && (
+              <TableRow>
+                <TableCell>Accuracy Modifier</TableCell>
+                <TableCell>{stats.accuracyModifier}</TableCell>
+              </TableRow>
+            )}
+            {!!stats.ergonomicsModifier && stats.ergonomicsModifier > 0 && (
+              <TableRow>
+                <TableCell>Ergonomics Modifier</TableCell>
+                <TableCell>{stats.ergonomicsModifier}</TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </Paper>
+    </Grid>
+  );
+};

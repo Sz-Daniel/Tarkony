@@ -73,7 +73,7 @@ export function ListSearchBar(props: Props) {
 }
 
 //
-function buildSearchRegex(query: string) {
+export function buildSearchRegex(query: string) {
   const parts = query
     .trim()
     .toLowerCase()

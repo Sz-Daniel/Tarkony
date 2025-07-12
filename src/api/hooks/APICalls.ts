@@ -1,7 +1,13 @@
 import { itemBaseAdapter, itemDetailsAdapter } from '../adapters/itemsAdapter';
-import { singleItemAdapter } from '../adapters/itemSingleAdapter';
+import {
+  singleItemAdapter,
+  singleItemPricesAdapter,
+} from '../adapters/itemSingleAdapter';
 import { useFetchIntoCache } from '../apiClient';
-import { singleItemQuery } from '../queries/itemSingleQuery';
+import {
+  singleItemPricesQuery,
+  singleItemQuery,
+} from '../queries/itemSingleQuery';
 import {
   categoriesQuery,
   itemBaseQuery,
@@ -16,8 +22,14 @@ import type {
   ItemBaseResultType,
   ItemDetailResultType,
 } from '../types/Items/responseType';
-import type { SingleItemQueryType } from '../types/ItemSingle/queryType';
-import type { SingleItemResultType } from '../types/ItemSingle/responseType';
+import type {
+  SingleItemPricesQueryType,
+  SingleItemQueryType,
+} from '../types/ItemSingle/queryType';
+import type {
+  SingleItemPricesResultType,
+  SingleItemResultType,
+} from '../types/ItemSingle/responseType';
 
 //param for weekly-daily etc
 const STALE_TIME_WEEKLY = 1000 * 60 * 60 * 24 * 7;
@@ -49,4 +61,11 @@ export function useSingleItemQuery(normalizedNameProp: string) {
     singleItemQuery(normalizedNameProp),
     singleItemAdapter
   );
+}
+
+export function useSingleItemPricesQuery(itemId: string) {
+  return useFetchIntoCache<
+    SingleItemPricesQueryType,
+    SingleItemPricesResultType
+  >(itemDetailsQuery(itemId), singleItemPricesAdapter);
 }

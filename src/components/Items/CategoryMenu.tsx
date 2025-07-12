@@ -5,12 +5,13 @@ import { Chip } from '@mui/material';
 import type { CategoryType } from '../../api/types/Items/queryType';
 import { useSelectedBulkCategoryLogic } from './categoryLogic';
 
-type Props = {
+interface Props {
   selectedCategory: string[];
   setSelectedCategory: React.Dispatch<React.SetStateAction<string[]>>;
-};
+}
 
-export function CategoryMenu({ selectedCategory, setSelectedCategory }: Props) {
+export function CategoryMenu(props: Props) {
+  const { selectedCategory, setSelectedCategory } = props;
   // Selected single category directly from the category list
   const [selected, setSelected] = useState<string>('item');
 

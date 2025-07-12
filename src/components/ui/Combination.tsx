@@ -6,7 +6,10 @@ import type {
 } from '../../api/types/ItemSingle/responseType';
 import { CountedItem } from './CountedItem';
 import { useQueryClient } from '@tanstack/react-query';
-import type { ItemBaseResultType } from '../../api/types/Items/responseType';
+import type {
+  ItemBaseResultType,
+  PriceDeal,
+} from '../../api/types/Items/responseType';
 import { itemBaseQuery } from '../../api/queries/itemsQuery';
 
 /**
@@ -28,12 +31,17 @@ export function Combination({ props }: Props) {
     queryClient.getQueryData([itemBaseQuery.name]) ?? [];
 
   // Find the best purchase price
-  const getBestPrice = (itemId: string, sell: boolean = false) => {
+  const checkPrice = (
+    itemId: string,
+    sell: boolean = false
+  ): PriceDeal | null => {
     const found = itemBaseListCache.find((entry) => entry.id === itemId);
-    if (!sell) {
-      return found?.bestBuy?.sort((a, b) => a.price! - b.price!)[0];
+    if (!found) return null;
+
+    if (sell) {
+      return found.bestSeller ?? null;
     } else {
-      return found?.bestSeller;
+      return found.bestBuy ?? null;
     }
   };
 
@@ -42,8 +50,8 @@ export function Combination({ props }: Props) {
 
   // Prepare the input section before rendering to minimize calculations during render
   const inputElemts = props.inputItems.map((inItem: ResponseCountedItem, j) => {
-    const bestDeal = getBestPrice(inItem.id);
-    if (bestDeal?.price && typeof buyout === 'number') {
+    const bestDeal = checkPrice(inItem.id);
+    if (bestDeal && bestDeal.price && typeof buyout === 'number') {
       buyout = buyout + bestDeal?.price * inItem.count;
     } else {
       buyout = null;
@@ -63,11 +71,15 @@ export function Combination({ props }: Props) {
   // Prepare the input section before rendering
   const outputElements = props.outputItems.map(
     (outItems: ResponseCountedItem, j) => {
-      const bestDeal = getBestPrice(outItems.id, true);
+      const bestDeal = checkPrice(outItems.id, true);
+      if (bestDeal && bestDeal.price && typeof buyout === 'number') {
+        buyout = buyout + bestDeal?.price * outItems.count;
+      } else {
+        buyout = null;
+      }
       return <CountedItem key={j} item={outItems} bestDeal={bestDeal} />;
     }
   );
-
   return (
     <>
       <Paper elevation={3} sx={{ p: 2 }}>

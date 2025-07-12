@@ -16,15 +16,16 @@ In the detailed data section, there's an All Data button that redirects the user
 
 ## High Prior Issue:
 
-There are some problems with the API data source. For now, I still have the data, but I cannot open the documentation and playground to identify the source of the problem without it.
-
 ### Done:
 
-- Component organization, branch it separately so this approach remains reviewable.
+- Refactor Tabs into separate components and encapsulated logic.
+- Refactor Adapter: for complex data, map per-object using dedicated helper functions in adapters.ts.
+- Prepare useSingleItemPricesQuery(itemId: string) for use in ItemSingle.
+- Extend ItemList searching with RegExp support.
 
 ### Next:
 
-- Full OOP and SOLID-based refactor on the main branch - Details below in the `Junior Journal - Planned OOP-Based Structure` section
+- Redesign of Combination with value comparison — requires implementation of bestPrices data fetching.
 
 ### Misc
 
@@ -37,9 +38,9 @@ There are some problems with the API data source. For now, I still have the data
 
 ### Still not figured out:
 
-- "Colt M4A1 5.56x45 assault rifle" - and other name problem: itemDetailsQuery without "name" works fine - Adapter problem,
-  with name this item have a problem "Golden neck chain", "Rubel"
-  Part of the name is same with other ?
+The Combination uses bestBuy and bestSell from itemBase.
+However, when I open the page directly on itemSingle (not via redirect), these fields are missing.
+To fix this properly, I would need to loop over useSingleItemPricesQuery(itemId: string) hook — but this would violate React hook rules.
 
 ## Overview
 
@@ -76,8 +77,10 @@ Tarkony
 ├── src/
 │   ├── api/
 │   │   ├── adapters/
+│   │   │   ├── adapters.ts
 │   │   │   ├── itemsAdapter.ts
-│   │   │   └── ItemSingleAdapter.ts
+│   │   │   ├── ItemSingleAdapter.ts
+│   │   │   └── worthAdapter.ts
 │   │   ├── hooks/
 │   │   │   └── APICalls.ts
 │   │   ├── old/
@@ -89,7 +92,10 @@ Tarkony
 │   │   │   ├── ItemSingle/
 │   │   │   │   ├── queryTyoe.ts
 │   │   │   │   └── responseType.ts
-│   │   │   └── items/
+│   │   │   ├── items/
+│   │   │   │   ├── queryTyoe.ts
+│   │   │   │   └── responseType.ts
+│   │   │   └── worth/
 │   │   │       ├── queryTyoe.ts
 │   │   │       └── responseType.ts
 │   │   └── apiClient.ts
@@ -98,7 +104,8 @@ Tarkony
 │   │   │   ├── categoryLogic.ts
 │   │   │   ├── CategoryMenu.tsx
 │   │   │   ├── ItemDetails.tsx
-│   │   │   └── ItemList.tsx
+│   │   │   ├── ItemList.tsx
+│   │   │   └── Tabs.tsx
 │   │   ├── layout/
 │   │   │   ├── Layout.tsx
 │   │   │   └── Footer.tsx
@@ -234,9 +241,9 @@ I removed this module since I switched to a clearer tab view, but I kept it beca
 
 Right from the start, I want to emphasize an important experience. As a junior, I considered it important to thoroughly understand how LLM works. At first, I used ChatGPT to get familiar and experiment with how I can use it as an aid. However, it has been a major hindrance so far. Gradually, I reduced its usage and only wanted to use it as guidance. Often, I deliberately did not set it aside, but I encountered many problems and lost a lot of time because of it. I did gain experience though, and the final result was always the same: among its suggestions were some functions that were indeed good to see, but when I wrote them myself, the code was much shorter and worked more efficiently - the best example: Category (see below: Categorical problems).
 
-### Planned OOP-Based Structure
+### S.O.L.I.D. refactor
 
-Based on the resources I have studied — including the official React documentation - it is clear that React primarily favors a functional and declarative approach. Accordingly, the older class-based component model has been gradually replaced by hook-based logic. However, throughout various development expectations and industry practices, I have frequently encountered a demand for object-oriented (OOP) design principles. I have decided to refactor the project into an OOP-based structure, with particular attention to adhering to the SOLID principles. The functional version will be preserved in a separate branch in a stable state.
+Started with ItemDetails where the Tabs handling, the craft, barter, tasks sorting logic was in there. Szem előtt tartva hogy minden komponenesnek csak egy célzott logikája legyen.
 
 ### Reflections on fetching implementation
 
@@ -284,3 +291,7 @@ After putting it aside for a while and completing another module, I approached t
 Thus, I retained a basic "flattened tree" structure that lists the branch and leaves for each selection and passes all the leaves under the branch to the listing as well - `useSelectedBulkCategoryLogic` works on a sort of recursive traversal level, which is displayed in ItemList.
 
 Possibly to be expanded long-term: when the user clicks on the selected category, it could go back to its parent level, enabling stepping back up to the root level.
+
+### `before-solid` Structure
+
+Based on the resources I have studied — including the official React documentation - it is clear that React primarily favors a functional and declarative approach. Accordingly, the older class-based component model has been gradually replaced by hook-based logic. However, throughout various development expectations and industry practices, I have frequently encountered a demand for object-oriented (OOP) design principles. I have decided to refactor the project into an OOP-based structure, with particular attention to adhering to the SOLID principles. The functional version will be preserved in a separate branch in a stable state. I store it in `before-solid' brench.

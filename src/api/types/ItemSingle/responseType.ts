@@ -1,3 +1,8 @@
+export type SingleItemPricesResultType = {
+  id: string;
+  sellTo: SellTo[];
+  buyFrom: BuyFrom[];
+};
 export type SingleItemResultType = {
   id: string;
   name: string;
@@ -18,23 +23,9 @@ export type SingleItemResultType = {
 
   updated: string;
 
-  fleaPrice: {
-    lastLowPrice: number;
-    low24hPrice: number;
-    avg24hPrice: number;
-    high24hPrice: number;
-    changeLast48hPercent: number;
-    changeLast48h: number;
-    lastOfferCount: number;
-  } | null;
+  fleaPrice: FleaPrice | null;
 
-  stats: {
-    velocity: number;
-    recoilModifier: number;
-    loudness: number;
-    accuracyModifier: number;
-    ergonomicsModifier: number;
-  } | null;
+  stats: Stats | null;
 
   sellTo: SellTo[];
 
@@ -53,6 +44,22 @@ export type SingleItemResultType = {
   taskGive: TaskGive[];
 };
 
+export type Stats = {
+  velocity: number;
+  recoilModifier: number;
+  loudness: number;
+  accuracyModifier: number;
+  ergonomicsModifier: number;
+};
+export type FleaPrice = {
+  lastLowPrice: number;
+  low24hPrice: number;
+  avg24hPrice: number;
+  high24hPrice: number;
+  changeLast48hPercent: number;
+  changeLast48h: number;
+  lastOfferCount: number;
+};
 type TaskGive = {
   name: string;
   reward: TaskItem[];

@@ -2,8 +2,8 @@ export type ItemBaseResultType = {
   id: string;
   name: string;
   iconURL: string;
-  bestSeller: PriceDeal;
-  bestBuy: PriceDeal[];
+  bestSeller: PriceDeal | null;
+  bestBuy: PriceDeal | null;
   changePrice: number;
   changePercent: number;
   category: string;
@@ -30,17 +30,17 @@ export type ItemDetailResultType = {
 
   craftOutput: Craft[];
 
-  taskNeed: TaskNeed[];
+  taskNeed: TaskNeed[] | null;
 
-  taskGive: TaskGive[];
+  taskGive: TaskGive[] | null;
 };
-type TaskGive = {
+export type TaskGive = {
   name: string;
-  reward: TaskItem[];
+  reward: TaskItem[] | null;
 };
-type TaskNeed = {
+export type TaskNeed = {
   name: string;
-  task: Task[];
+  task: Task[] | null;
 };
 
 type Task = Description & TaskItem;
@@ -53,8 +53,8 @@ type TaskItem = {
 };
 
 export type PriceDeal = {
-  price: number | null;
-  place: string | null;
+  price: number;
+  place: string;
 };
 
 export type Craft = CraftRequirement & {
@@ -65,8 +65,8 @@ export type Craft = CraftRequirement & {
 type CraftRequirement = {
   id: string;
   duration: number;
-  stationRequirement: StationRequirement;
-  questRequirement: QuestRequirement;
+  stationRequirement: StationRequirement | null;
+  questRequirement: QuestRequirement | null;
 };
 
 type StationRequirement = {
@@ -75,7 +75,7 @@ type StationRequirement = {
   stationIcon: string;
 };
 
-export type Barter = PurchaseRequirement & {
+export type Barter = (PurchaseRequirement | null) & {
   inputItems: ResponseCountedItem[];
   outputItems: ResponseCountedItem[];
 };
@@ -92,7 +92,7 @@ type SellTo = PriceInfo & {
   traderName: string;
 };
 
-type BuyFrom = PriceInfo & PurchaseRequirement;
+export type BuyFrom = PriceInfo & (PurchaseRequirement | null);
 
 type PriceInfo = {
   priceRub: number;
@@ -111,7 +111,7 @@ type QuestRequirement = {
   name: string;
 };
 
-type PlayertoTraderRequirements = {
+export type PlayertoTraderRequirements = {
   traderName: string;
   traderIcon: string;
   traderLevel: number;

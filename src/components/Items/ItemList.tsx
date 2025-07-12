@@ -14,6 +14,8 @@ import { itemBaseQuery } from '../../api/queries/itemsQuery';
 import { ItemDetailDisplay } from './ItemDetail';
 import { SearchBar } from '../ui/SeachBar';
 import type { ItemBaseResultType } from '../../api/types/Items/responseType';
+import { Item } from '../../themes/themes';
+import { buildSearchRegex } from '../Worth/ListSearchBar';
 
 type ItemListProps = {
   selectedCategory: string[];
@@ -46,8 +48,9 @@ export function ItemList({
       list = list.filter((item) => selectedCategory.includes(item.category));
     }
     if (searchedName) {
-      const lower = searchedName.toLowerCase();
-      list = list.filter((item) => item.name.toLowerCase().includes(lower));
+      const lower = searchedName.trim().toLowerCase();
+      const regex = buildSearchRegex(lower);
+      list = list?.filter((item) => regex.test(item.name.toLowerCase())) ?? [];
     }
     return list;
   }, [itemBaseListCache, selectedCategory, searchedName]);
@@ -112,12 +115,6 @@ type ItemBaseDisplayProps = {
   item: ItemBaseResultType;
 };
 const ItemBaseDisplay = memo(({ item }: ItemBaseDisplayProps) => {
-  const Item = styled(Box)(({ theme }) => ({
-    padding: theme.spacing(2),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-  }));
-
   return (
     <>
       <AccordionSummary
@@ -152,24 +149,26 @@ const ItemBaseDisplay = memo(({ item }: ItemBaseDisplayProps) => {
 
         {/* BEST SELLER PRICE*/}
         <Box sx={{ flex: 1, alignSelf: 'flex-end' }}>
-          <Stack spacing={0}>
-            <Item>Sell to: {item.bestSeller.place} </Item>
-            <Item>
-              {item.bestSeller.price?.toLocaleString()}
-              {'Flea Market' === item.bestSeller.place ? (
-                <Typography
-                  component="span"
-                  color={item.changePercent > 0 ? 'red' : 'green'}
-                >
-                  <sup>
-                    {item.changePercent}% {item.changePrice.toLocaleString()}
-                  </sup>
-                </Typography>
-              ) : (
-                ''
-              )}
-            </Item>
-          </Stack>
+          {item.bestSeller && (
+            <Stack spacing={0}>
+              <Item>Sell to: {item.bestSeller.place} </Item>
+              <Item>
+                {item.bestSeller.price?.toLocaleString()}
+                {'Flea Market' === item.bestSeller.place ? (
+                  <Typography
+                    component="span"
+                    color={item.changePercent > 0 ? 'red' : 'green'}
+                  >
+                    <sup>
+                      {item.changePercent}% {item.changePrice.toLocaleString()}
+                    </sup>
+                  </Typography>
+                ) : (
+                  ''
+                )}
+              </Item>
+            </Stack>
+          )}
         </Box>
       </AccordionSummary>
     </>

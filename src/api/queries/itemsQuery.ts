@@ -83,8 +83,9 @@ export const itemDetailsQuery = (id: string = ''): QueryType => {
           ... on TraderOffer {
             minTraderLevel
             buyLimit
-            name
             trader {
+              name
+              imageLink
               levels {
                 level
                 requiredPlayerLevel
@@ -93,8 +94,8 @@ export const itemDetailsQuery = (id: string = ''): QueryType => {
               }
             }
             taskUnlock {
-            name
-            minPlayerLevel
+              name
+              minPlayerLevel
             }
           }
         }

@@ -9,6 +9,14 @@ export type QueryType = {
   query: string;
 };
 
+export type SingleItemPricesQueryType = {
+  id: string;
+
+  sellFor: SellFor[];
+
+  buyFor: BuyFor[];
+};
+
 export type SingleItemQueryType = {
   id: string;
   name: string;
@@ -60,7 +68,7 @@ export type SingleItemQueryType = {
   receivedFromTasks: ReceivedFromTask[];
 };
 
-type ReceivedFromTask = {
+export type ReceivedFromTask = {
   name: string;
   finishRewards: FinishRewards;
 };
@@ -69,23 +77,23 @@ type FinishRewards = {
   items: RewardItem[];
 };
 
-type RewardItem = {
+export type RewardItem = {
   count: number;
   item: name;
 };
 
-type UsedInTask = {
+export type UsedInTask = {
   name: string;
   objectives: TaskObjectiveItem[];
 };
 
-type TaskObjectiveItem = {
+export type TaskObjectiveItem = {
   description: string;
   count: number;
   item: name;
 };
 
-type CraftsUsing = {
+export type CraftsUsing = {
   id: string;
   duration: number;
   level: number;
@@ -94,7 +102,7 @@ type CraftsUsing = {
   requiredItems: QueryCountedItem[];
   rewardItems: QueryCountedItem[];
 };
-type CraftsFor = {
+export type CraftsFor = {
   id: string;
   duration: number;
   level: number;
@@ -104,7 +112,11 @@ type CraftsFor = {
   rewardItems: QueryCountedItem[];
 };
 
-type BartersFor = {
+export type Station = {
+  name: string;
+  imageLink: string;
+};
+export type BartersFor = {
   id: string;
   buyLimit: number;
   level: number;
@@ -114,7 +126,7 @@ type BartersFor = {
   rewardItems: QueryCountedItem[];
 };
 
-type BartersUsing = {
+export type BartersUsing = {
   id: string;
   buyLimit: number;
   level: number;
@@ -123,42 +135,44 @@ type BartersUsing = {
   requiredItems: QueryCountedItem[];
   rewardItems: QueryCountedItem[];
 };
+export type QueryCountedItem = {
+  count: number;
+  item: itemIcon;
+};
 
-type BuyFor = {
+type traderDetail = {
+  imageLink: string;
+  name: string;
+};
+export type BuyFor = {
   priceRUB: number;
   price: number;
   currency: string;
   vendor: Vendor;
 };
-type Station = {
-  name: string;
-  imageLink: string;
-};
+
 type Vendor = {
   minTraderLevel: number;
   buyLimit: number;
-  name: string;
   trader: Trader;
   taskUnlock: TaskUnlock;
 };
 
-type Trader = {
+export type Trader = traderDetail & {
   levels: Levels[];
 };
-
 type Levels = {
   level: number;
   requiredPlayerLevel: number;
   requiredReputation: number;
   requiredCommerce: number;
 };
-
-type TaskUnlock = {
+export type TaskUnlock = {
   name: string;
   minPlayerLevel: number;
 };
 
-type SellFor = {
+export type SellFor = {
   priceRUB: number;
   vendor: sellforVendor;
   price: number;
@@ -170,10 +184,15 @@ type sellforVendor = {
   foundInRaidRequired: Boolean;
 };
 
-//SubTypes
-type QueryCountedItem = {
-  count: number;
-  item: itemIcon;
+type BaseType = {
+  id: string;
+  name: string;
+  normalizedName: string;
+};
+
+export type traderForType = {
+  priceRUB: number;
+  vendor: name;
 };
 
 type itemIcon = {
@@ -181,34 +200,11 @@ type itemIcon = {
   name: string;
   gridImageLink: string;
 };
-type traderDetail = {
-  imageLink: string;
-  name: string;
-};
-type name = {
-  name: string;
-};
 
 type normalizedName = {
   normalizedName: string;
 };
 
-/**NOT USING
- * type requiredItemsType = {
-  requiredItems: CountedItem[];
+type name = {
+  name: string;
 };
-
-type rewardItemsType = {
-  rewardItems: CountedItem[];
-};
-
-type receivedFromTasksType ={
-  name:string,
-  finishRewards: rewardTaskType  
-};
-
-type rewardTaskType = {
-  items: items[]
-};
-
- */

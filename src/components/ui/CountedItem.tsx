@@ -4,7 +4,7 @@ import type { PriceDeal } from '../../api/types/Items/responseType';
 
 type Props = {
   item: ResponseCountedItem;
-  bestDeal?: PriceDeal;
+  bestDeal?: PriceDeal | null;
 };
 
 /**
