@@ -26,6 +26,7 @@ In the detailed data section, there's an All Data button that redirects the user
 ### Next:
 
 - Redesign of Combination with value comparison — requires implementation of bestPrices data fetching.
+  Counteditemben meghívva a fetch ? - lekérés után kiválasztjuk a best deal-t ? Combinationben gyűjtő ár props ként a setterje?
 
 ### Misc
 
