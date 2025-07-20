@@ -23,12 +23,24 @@ In the detailed data section, there's an All Data button that redirects the user
 - Prepare useSingleItemPricesQuery(itemId: string) for use in ItemSingle.
 - Extend ItemList searching with RegExp support.
 
+- Extend CategoryMenu with categ selected ini prop ->'items' or 'weapon-mod'
+
 ### Next:
 
-- Redesign of Combination with value comparison — requires implementation of bestPrices data fetching.
-  Counteditemben meghívva a fetch ? - lekérés után kiválasztjuk a best deal-t ? Combinationben gyűjtő ár props ként a setterje?
+#### Item:
 
-### Misc
+- Order by Price? Filter by Trader - Click and select-opinion?- SAME AS MOD
+- ItemBaseList length === 0 NullOverlay
+
+#### Mod:
+
+- Caliber sort manually
+- Keressen és listázzon ki mindent ? Order By ?
+- Listázzon kategórián belül kategóriákat ki - Rekurzív ?
+
+#### Worth:
+
+- Redesign of Combination with value comparison — requires implementation of bestPrices data fetching. – In CountedItem, should we call the fetch? — and after fetching, select the best deal? – In Combination, should we collect the aggregated price as a prop and pass its setter? – CountedItem could get a wrapper component for the case when it’s not invoked from itemList, so that we can still pass the necessary deals as a parameter.
 
 ### Major
 

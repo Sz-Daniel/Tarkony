@@ -8,12 +8,13 @@ import { useSelectedBulkCategoryLogic } from './categoryLogic';
 interface Props {
   selectedCategory: string[];
   setSelectedCategory: React.Dispatch<React.SetStateAction<string[]>>;
+  categoryIni?: string;
 }
 
 export function CategoryMenu(props: Props) {
-  const { selectedCategory, setSelectedCategory } = props;
+  const { selectedCategory, setSelectedCategory, categoryIni = 'item' } = props;
   // Selected single category directly from the category list
-  const [selected, setSelected] = useState<string>('item');
+  const [selected, setSelected] = useState<string>(categoryIni);
 
   // This state stores the category map to display, showing the current level plus one level of children based on the previously selected category
   const [categoryListShow, setCategoryListShow] = useState<
