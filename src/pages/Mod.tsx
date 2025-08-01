@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { useCategoryQuery } from '../api/hooks/APICalls';
+import { useCategoryQuery } from '../hooks/APICalls';
 import { CategoryMenu } from '../components/Items/CategoryMenu';
 import { Skeleton } from '../components/ui/skeletons/Skeleton';
 import { ErrorOverlay } from '../components/ui/Status';

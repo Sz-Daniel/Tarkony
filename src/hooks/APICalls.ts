@@ -1,35 +1,38 @@
-import { itemBaseAdapter, itemDetailsAdapter } from '../adapters/itemsAdapter';
+import {
+  itemBaseAdapter,
+  itemDetailsAdapter,
+} from '../api/adapters/itemsAdapter';
 import {
   singleItemAdapter,
   singleItemPricesAdapter,
-} from '../adapters/itemSingleAdapter';
-import { useFetchIntoCache } from '../apiClient';
+} from '../api/adapters/itemSingleAdapter';
+import { useFetchIntoCache } from '../api/apiClient';
 import {
   singleItemPricesQuery,
   singleItemQuery,
-} from '../queries/itemSingleQuery';
+} from '../api/queries/itemSingleQuery';
 import {
   categoriesQuery,
   itemBaseQuery,
   itemDetailsQuery,
-} from '../queries/itemsQuery';
+} from '../api/queries/itemsQuery';
 import type {
   CategoryType,
   ItemBaseQueryType,
   ItemDetailQueryType,
-} from '../types/Items/queryType';
+} from '../api/types/Items/queryType';
 import type {
   ItemBaseResultType,
   ItemDetailResultType,
-} from '../types/Items/responseType';
+} from '../api/types/Items/responseType';
 import type {
   SingleItemPricesQueryType,
   SingleItemQueryType,
-} from '../types/ItemSingle/queryType';
+} from '../api/types/ItemSingle/queryType';
 import type {
   SingleItemPricesResultType,
   SingleItemResultType,
-} from '../types/ItemSingle/responseType';
+} from '../api/types/ItemSingle/responseType';
 
 //param for weekly-daily etc
 const STALE_TIME_WEEKLY = 1000 * 60 * 60 * 24 * 7;

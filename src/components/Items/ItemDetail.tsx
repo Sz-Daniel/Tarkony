@@ -10,15 +10,12 @@ import {
   Typography,
 } from '@mui/material';
 import { Grid } from '@mui/system';
-import type {
-  Craft,
-  ItemDetailResultType,
-} from '../../api/types/Items/responseType';
-import { useItemDetailQuery } from '../../api/hooks/APICalls';
+import type { ItemDetailResultType } from '../../api/types/Items/responseType';
+import { useItemDetailQuery } from '../../hooks/APICalls';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { CustomTabPanel, TabsDisplay, useTabsLogic } from './Tabs';
 import { Combination } from '../ui/Combination';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Skeleton } from '../ui/skeletons/Skeleton';
 import { ErrorOverlay } from '../ui/Status';
 

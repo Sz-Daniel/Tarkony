@@ -15,7 +15,7 @@ import {
   ListItemText,
   Button,
 } from '@mui/material';
-import { useSingleItemQuery } from '../api/hooks/APICalls';
+import { useSingleItemQuery } from '../hooks/APICalls';
 import type {
   FleaPrice,
   SingleItemResultType,

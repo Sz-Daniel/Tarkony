@@ -1,4 +1,16 @@
-# Tarkony - 2025.06.26
+# Tarkony - 2025.08.01
+
+## Future
+
+The current focus of the project is to stabilize the core functionality: listing items on the main page and displaying detailed information on a single item view. The “Worth” and “Modding” pages are currently on hold, but are intended for future development. These sections will provide additional value and depth to the project once the core architecture is stabilized.
+
+A separate backend will be developed to handle the external data source. Instead of fetching data on each render, the backend will retrieve and store the data in a local database. The frontend will then access the data via a dedicated REST API.
+
+A long-term goal is to implement multiple, independent backend versions using different technology stacks (e.g., Express.js, .NET, Laravel). The purpose is to practice and demonstrate backend logic replication across various programming environments while maintaining functional parity.
+
+Each backend stack will be maintained in its own repository (multi-repo structure), while a central monorepo will coordinate shared infrastructure components—such as user management, deployment logic, and stack-routing functionality.
+
+The project will include a containerized (Docker-based) CI/CD pipeline, ensuring streamlined and independent deployment for each backend stack. The overall goal is to create a complex yet maintainable architecture that supports technological flexibility and scalability.
 
 ## Guide
 
@@ -26,6 +38,11 @@ In the detailed data section, there's an All Data button that redirects the user
 - Extend CategoryMenu with categ selected ini prop ->'items' or 'weapon-mod'
 
 ### Next:
+
+#### SearchBar:
+
+- hooks/SeachBars Wrapper cache - fetch and use only One Searchbar
+  ? propdrilling ? context
 
 #### Item:
 

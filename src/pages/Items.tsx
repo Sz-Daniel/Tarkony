@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { CategoryMenu } from '../components/Items/CategoryMenu';
 import { ItemList } from '../components/Items/ItemList';
-import { useCategoryQuery, useItemBaseListQuery } from '../api/hooks/APICalls';
+import { useCategoryQuery, useItemBaseListQuery } from '../hooks/APICalls';
 import { Skeleton } from '../components/ui/skeletons/Skeleton';
 import { ErrorOverlay } from '../components/ui/Status';
 
