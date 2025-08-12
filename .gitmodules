@@ -1,0 +1,9 @@
+[submodule "react-frontend"]
+	path = react-frontend
+	url = https://github.com/Sz-Daniel/Tarkony-react-frontend
+[submodule "Tarkony-react-frontend"]
+	path = Tarkony-react-frontend
+	url = https://github.com/Sz-Daniel/Tarkony-react-frontend
+[submodule "Tarkony-express-backend"]
+	path = Tarkony-express-backend
+	url = https://github.com/Sz-Daniel/Tarkony-express-backend
