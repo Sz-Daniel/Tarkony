@@ -1,4 +1,4 @@
-# Tarkony - 2025.08.01
+# Tarkony - 2025.08.12
 
 ## In progress:
 
@@ -9,6 +9,7 @@ ExpressJS - Backend, is currently being developed to handle GraphQL data, perfor
 This repository represents the monolithic repository that handles the entire multi-repo system. Modules like react-frontend and express-backend work as multi-repos to avoid managing every change directly in the main monolith.
 
 Muti-repos:
+
 [React, Typescript, Material UI, Tanstack - Frontend Git Repo](https://github.com/Sz-Daniel/Tarkony-react-frontend)
 
 [NodeJS / ExpressJS - Backend Git Repo](https://github.com/Sz-Daniel/Tarkony-express-backend)
