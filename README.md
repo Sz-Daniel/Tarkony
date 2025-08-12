@@ -10,6 +10,7 @@ This repository represents the monolithic repository that handles the entire mul
 
 Muti-repos:
 [React, Typescript, Material UI, Tanstack - Frontend Git Repo](https://github.com/Sz-Daniel/Tarkony-react-frontend)
+
 [NodeJS / ExpressJS - Backend Git Repo](https://github.com/Sz-Daniel/Tarkony-express-backend)
 
 ## Future
