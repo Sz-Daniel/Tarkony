@@ -71,23 +71,6 @@ Data is fetched from a GraphQL API:
 
 ---
 
-## Project Structure
-
-```bash
-Tarkony
-├── public/
-├── src/
-│   ├── api/
-│   │   ├── adapters/
-│   │   │   ├── adapters.ts
-│   │   │   ├── itemsAdapter.ts
-│   │   │   ├── ItemSingleAdapter.ts
-│   │   │   └── worthAdapter.ts
-
-├── index.html
-└── README.md
-```
-
 ## Junior Journal
 
 Right from the start, I want to emphasize an important experience. As a junior, I considered it essential to thoroughly understand how LLM works. At first, I used ChatGPT to get familiar and experiment with how I can use it as an aid. However, it has often been more of a hindrance so far. Gradually, I reduced its usage and only sought guidance from it. Often, I deliberately did not put it aside, but I encountered many problems and lost a lot of time because of it. I did gain experience, though, and the final result was always the same: among its suggestions, there were some good functions worth seeing, but when I wrote the code myself, it was much shorter and worked more efficiently — the best example is the React Frontend Category (see below: Categorical problems).
