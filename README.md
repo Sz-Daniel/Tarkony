@@ -2,7 +2,7 @@
 
 ## In progress:
 
-ExpressJS - Backend, is currently being developed to handle GraphQL data, perform data testing, store data in the database, and serve the frontend to avoid unnecessary API calls to the source on every frontend request.
+ ASP.NET - Backend, is currently being developed to handle GraphQL data, perform data testing, store data in the database, and serve the frontend to avoid unnecessary API calls to the source on every frontend request.
 
 ## Repository
 
@@ -11,10 +11,11 @@ This repository represents the monolithic repository that handles the entire mul
 Muti-repos:
 
 [React, Typescript, Material UI, Tanstack - Frontend Git Repo](https://github.com/Sz-Daniel/Tarkony-react-frontend)
-
-[NodeJS / ExpressJS - Backend Git Repo](https://github.com/Sz-Daniel/Tarkony-express-backend)
+[ASP.NET - Backend Git Repo](https://github.com/Sz-Daniel/Tarkony-aspdotnet-backend)
 
 ## Future
+
+ExpressJS - Backend, will handle GraphQL data, perform data testing, store data in the database, and serve the frontend to avoid unnecessary API calls to the source on every frontend request. [NodeJS / ExpressJS - Backend Git Repo](https://github.com/Sz-Daniel/Tarkony-express-backend)
 
 The current focus of the project is to stabilize the core functionality: listing items on the main page and displaying detailed information on a single item view. The “Worth” and “Modding” pages are currently on hold, but are intended for future development. These sections will provide additional value and depth to the project once the core architecture is stabilized.
 

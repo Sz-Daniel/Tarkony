@@ -4,3 +4,6 @@
 [submodule "Tarkony-express-backend"]
 	path = Tarkony-express-backend
 	url = https://github.com/Sz-Daniel/Tarkony-express-backend
+[submodule "Tarkony-aspdotnet-backend"]
+	path = Tarkony-aspdotnet-backend
+	url = https://github.com/Sz-Daniel/Tarkony-aspdotnet-backend
