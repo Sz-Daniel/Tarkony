@@ -4,7 +4,7 @@
 
 ### About Site
 
-This project serves as a junior learning reference, created to explore, practice, and document the process of applying new development skills in a real project environment.
+A personal learning project created to practice development skills and document my journey.
 
 The website related to the Escape from Tarkov game aims to provide quick and easily accessible information about in-game items. This includes, for example, current selling prices, as well as concise key data such as prices from other traders and the role of items in barter crafting or quests. In the future, I plan to enable users to assess whether it is worthwhile to invest in a particular item based on additional crafting or barter connections. Additionally, a separate module will be available to compare the values and performance of weapon mods.
 
