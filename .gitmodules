@@ -8,3 +8,6 @@
 	path = Tarkony-aspdotnet-backend
 	url = https://github.com/Sz-Daniel/Tarkony-aspdotnet-backend
 
+[submodule "Tarkony-php-backend"]
+	path = Tarkony-php-backend
+	url = https://github.com/Sz-Daniel/Tarkony-php-backend
