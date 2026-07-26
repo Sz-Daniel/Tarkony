@@ -4,7 +4,7 @@
 
 [Tarkony - Live page](https://tarkony.netlify.app/)
 
-[Git Repo](https://github.com/Sz-Daniel/Tarkony-react-frontend)
+[Git Repo with HR Friendly section](https://github.com/Sz-Daniel/Tarkony-react-frontend)
 
 Tech stack: React, Typescript, React Query (Tanstack Query), Material UI, REST API, GraphQL API, Recharts
 
@@ -12,7 +12,7 @@ Core Competencies: State Management, API Architectures, Data Visualization, Clea
 
 ### Backend
 
-[Git Repo](https://github.com/Sz-Daniel/Tarkony-aspdotnet-backend)
+[Git Repo with HR Friendly section](https://github.com/Sz-Daniel/Tarkony-aspdotnet-backend)
 
 Tech Stack: ASP.NET Core (C#, .NET 8), REST API + Swagger, MongoDB, Third-Party GraphQL Integration, Serilog, CORS, Rate Limiting, Health Checks, Dependency Injection, Docker
 
